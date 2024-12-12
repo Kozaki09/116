@@ -1,71 +1,20 @@
 require('dotenv').config();
 const express = require("express");
-const { Pool } = require('pg');
-const fs = require('fs');
-
-const app = express();
-const port = 3000;
+const db = require('./db');
 
 
-const pool = new Pool({
-    connectionString: process.env.DB_URL,
-    ssl: {
-        rejectUnauthorized: false, // Allows connections with self-signed certificates
-    },
-});
+query1 = 'CREATE TABLE book_copies (book_id INT REFERENCES books(id) ON DELETE CASCADE, user_id INT REFERENCES users(id) ON DELETE CASCADE, PRIMARY KEY (book_id, user_id));';
+query2 = 'INSERT INTO authors (auth_name) VALUES ($1);';
+query3 = 'INSERT INTO publishers (publishers) VALUES ($1);';
+query4 = `INSERT INTO books (isbn, title, author, year_publication, availability) VALUES ($1, $2, $3, $4, 'PUBLIC');`;
+query5 = `
+    INSERT INTO book_copies (book_id, user_id)
+    VALUES ($1, $2);
+`;
+// db.query(query1);
+// db.query(query2, ["NISIOISIN"]);
+// db.query(query4, ["978-4-06-283602-9", "Bakemonogatari (Vol. 1)", "NISIOISIN", "November 2, 2006"]);
+db.query(query5, [1, 1]);
 
 
-
-const testConnection = async () => {
-    try {
-        const client = await pool.connect();
-        console.log("Connected to the database!");
-        const res = await client.query('SELECT NOW()');
-        console.log('Server Time:', res.rows[0].now);
-        client.release();
-    } catch (err) {
-        console.error('Database Connection Error:', err.message);
-        console.error(err.stack);
-    } finally {
-        await pool.end(); // Ensure the connection pool is closed after testing
-    }
-};
-
-const runSQLFile = async (filePath) => {
-    try {
-        console.log("Trying to create database tables.")
-        // Read the SQL file
-        const sql = fs.readFileSync(filePath, 'utf-8');
-
-        // Get a client from the pool
-        const client = await pool.connect();
-
-        // Execute the SQL
-        await client.query(sql);
-
-        console.log('SQL file executed successfully!');
-
-        // Release the client back to the pool
-        client.release();
-    } catch (err) {
-        console.error('Error executing SQL file:', err.message);
-    }
-};
-// Run the SQL file
-const sqlFilePath = './create_tables.sql'; // Change this to your actual SQL file path
-runSQLFile(sqlFilePath);   
-
-testConnection();
-
-app.get("/", (req, res) =>{
-    res.send("Hello World");
-    
-}, (err, res) => {
-    if (err) {
-        console.log(err.message);
-    }
-})
-
-app.listen(port, () => {
-    console.log(`Example app listening at  http://localhost:${port}\n`);
-});
+console.log("Querry Done.")

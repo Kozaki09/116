@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Books</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .content {
+            width: 100%;
+            max-width: 800px;
+            padding: 20px;
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            overflow-y: auto;
+            display: block;
+            max-height: 300px;
+            overflow-y: scroll;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .loading {
+            font-size: 1.2em;
+            color: #888;
+        }
+        .error {
+            color: red;
+        }
+        .submit-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            align-self: center;
+        }
+        .submit-btn:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="content">
+        <h1>My Books</h1>
+        <div id="loading" class="loading">Loading books...</div>
+        <table id="booksTable" style="display: none;">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Author</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Data will be inserted here -->
+            </tbody>
+        </table>
+        <div id="error" class="error" style="display: none;">Failed to load books. Please try again later.</div>
+
+        <!-- Button to redirect to /submit_book -->
+        <button class="submit-btn" onclick="window.location.href = '/submit_book';">Submit New Book</button>
+    </div>
+
+    <script>
+        // Function to fetch books from the API
+        async function fetchBooks() {
+            try {
+                const response = await fetch('/api/my_books');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch data');
+                }
+                const books = await response.json();
+
+                // Hide loading and show table
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('booksTable').style.display = 'table';
+
+                // Get the table body and clear any previous rows
+                const tableBody = document.querySelector('#booksTable tbody');
+                tableBody.innerHTML = '';
+
+                // Insert rows into the table
+                books.forEach(book => {
+                    const row = document.createElement('tr');
+                    const titleCell = document.createElement('td');
+                    titleCell.textContent = book.title;
+                    const authorCell = document.createElement('td');
+                    authorCell.textContent = book.author;
+
+                    row.appendChild(titleCell);
+                    row.appendChild(authorCell);
+                    tableBody.appendChild(row);
+                });
+            } catch (error) {
+                // Handle any errors
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('error').style.display = 'block';
+                console.error('Error fetching books:', error);
+            }
+        }
+
+        // Call the function to fetch books on page load
+        fetchBooks();
+    </script>
+</body>
+</html>

@@ -3,6 +3,7 @@ const path = require('path');
 const bcrypt = require('bcryptjs');
 const session = require('express-session');
 const db = require('./db');
+const routes = require('./routes')
 require('dotenv').config();
 
 const app = express();
@@ -17,10 +18,10 @@ app.use(session({
     saveUninitialized: true
 }));
 
-db.testConnection();
+// db.testConnection();
+let isLoggedIn = false;
+routes(app); 
 
-
-let isLoggedIn = false; 
 
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -37,7 +38,7 @@ app.post('/login', async (req, res) => {
     try {
         const result = await db.query('SELECT * FROM users WHERE email = $1', [email]);
         if (result.rows.length == 0) {
-            res.send(`
+            return res.send(`
                 <script>
                     alert('Email user not found!');
                     window.location.href = '/';
@@ -47,8 +48,8 @@ app.post('/login', async (req, res) => {
         const user = result.rows[0];
         const isMatch = await bcrypt.compare(password, user.password);
 
-        if (isMatch) {
-            res.send(`
+        if (!isMatch) {
+            return res.send(`
                 <script>
                     alert('Wrong password!');
                     window.location.href = '/';
@@ -58,12 +59,13 @@ app.post('/login', async (req, res) => {
 
         req.session.isLoggedIn = true;
         req.session.username = user.username;
+        req.session.user_id = user.id;
         isLoggedIn = true;
 
-        res.redirect('/');
+        return res.redirect('/');
     } catch (err) {
         console.error('Error:', err);
-        res.sendStatus(500);
+        return res.sendStatus(500);
     }
 });
 
@@ -79,8 +81,8 @@ app.post('/create', async (req, res) => {
                 </script>`);
         }
 
-        const hashedPassword = await hashPassword(password);
-        await db.query('INSERT INTO users (username, email, password) VALUES ($1, $2, $3)', [username, email, hashedPassword]);
+        const password_hashed = await hashPassword(password);
+        await db.query('INSERT INTO users (username, email, password) VALUES ($1, $2, $3)', [username, email, password_hashed]);
         res.send(`
             <script>
                 alert('Account Succesfully Created. Please Log in');
@@ -110,8 +112,8 @@ app.get('/logout', (req, res) => {
 
 async function hashPassword(password) {
     try {
-        const hashedPassword = await bcrypt.hash(password, saltRounds);
-        return hashedPassword;
+        const password_hashed = await bcrypt.hash(password, saltRounds);
+        return password_hashed;
     } catch (error) {
         throw err;
     }
@@ -119,4 +121,6 @@ async function hashPassword(password) {
 
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
+    const res = client.query('SELECT NOW()'); 
+    console.log('Database connection successful, server time:', res.rows[0].now);  
 });
