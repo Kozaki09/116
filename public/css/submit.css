@@ -1,0 +1,21 @@
+/* book-form.css */
+
+/* Specific styles for the book information form */
+h1 {
+    font-size: 2em;
+    margin-bottom: 20px;
+}
+
+/* Optional section subheader styling */
+.optional-subheader {
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #555;
+    margin-top: 10px;
+}
+
+/* Line separator for form fields */
+hr.line {
+    border-top: 2px solid #ccc;
+    margin: 20px 0;
+}

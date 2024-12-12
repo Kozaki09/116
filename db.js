@@ -1,10 +1,16 @@
 const { Pool } = require('pg');
+const { Sequelize } = require('sequelize');
 require('dotenv').config();
 
 // Set up PostgreSQL connection pool
 const pool = new Pool({
     connectionString: process.env.DB_URL,  // Your DB connection URL from .env
     ssl: { rejectUnauthorized: false },    // Adjust SSL settings based on your server
+});
+
+const sequelize = new sequelize('database_name', 'username', 'password', {
+    host: 'localhost',
+    dialect: 'postgres',
 });
 
 // Function to run queries (e.g., SELECT, INSERT, UPDATE, DELETE)
@@ -34,7 +40,8 @@ const testConnection = async () => {
 
 // Export query function and pool for other modules to use
 module.exports = {
-    query,
     pool,
+    sequelize,
     testConnection,
+    query,
 };

@@ -4,26 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Book Information Form</title>
-    <link rel="stylesheet" href="styles.css"> <!-- Link to external CSS file -->
-    <style>
-        /* Add a line after ISBN */
-        .line {
-            border-top: 2px solid #ccc;
-            margin: 20px 0;
-        }
-
-        /* Style for the subheader */
-        .optional-subheader {
-            font-size: 1.1em;
-            font-weight: bold;
-            color: #555;
-            margin-top: 10px;
-        }
-    </style>
+    <link rel="stylesheet" href="css/general.css"> <!-- General CSS -->   
+    <link rel="stylesheet" href="css/submit.css"> <!-- Specific CSS for book form -->
 </head>
 <body>
-    <div class="container">
-        <h2>Book Information</h2>
+    <div class="content">
+        <h1>Submit Book Information</h1>
         <form action="/action/submit_book" method="POST">
             <!-- Book Title -->
             <label for="title">Book Title:</label>
@@ -41,13 +27,13 @@
                 <option value="unlisted">Unlisted</option>
             </select>
 
-            <!-- Line separating required and optional fields -->
-            <div class="line"></div>
+            <!-- Line separator -->
+            <hr class="line">
 
             <!-- Optional Section Subheader -->
-            <div class="subheader">Optional:</div>
+            <div class="optional-subheader">Optional:</div>
 
-           <!-- Author (optional) -->
+            <!-- Author (optional) -->
             <label for="authors">Author(s):</label>
             <input type="text" id="authors" name="authors" placeholder="Enter author(s) name(s) (comma-separated)">
 
