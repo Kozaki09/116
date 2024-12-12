@@ -1,7 +1,8 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../db');
 
-const Author = sequelize.define('Author', {
+module.exports = (sequelize, DataTypes) => {
+    const Author = sequelize.define('Author', {
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -13,9 +14,10 @@ const Author = sequelize.define('Author', {
         allowNull: false,
         unique: true,
     }
-}, {
-    tablename: 'authors',
-    timestamp: false,
-});
+    }, {
+        tablename: 'authors',
+        timestamp: false,
+    });
 
-module.exports = Author;
+    return Author;
+}

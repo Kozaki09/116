@@ -5,6 +5,15 @@ const session = require('express-session');
 const db = require('./db');
 const routes = require('./routes')
 require('dotenv').config();
+const { sequelize } = require('./models');
+
+sequelize.sync({ force: false })  // Set 'force: true' for resetting the database
+  .then(() => {
+    console.log('Database synchronized');
+  })
+  .catch(err => {
+    console.error('Failed to synchronize database:', err);
+  });
 
 const app = express();
 const port = 3000;

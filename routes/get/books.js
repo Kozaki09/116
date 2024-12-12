@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../../db');
-const Book = require('../../Models');
+const { Author, Book, BookCopy, User } = require('../..');
 
 // route for user owned books
 router.get('/my_books', async (req, res) =>{
@@ -34,21 +34,11 @@ router.get('/my_books', async (req, res) =>{
 
         });
 
-        public_books = results.map(results => ({
-            title: results.title,
+        public_books = result.map(book  => ({
+            title: book.title,
             authors: book.authors.map(author => author.auth_name)
         }));
 
-        // const query = `
-        //     SELECT books.title, authors.auth_name 
-        //     FROM books
-        //     JOIN book_copies ON books.id = book_copies.book_id
-        //     JOIN users ON users.id = book_copies.user_id
-        //     JOIN book_authors ON books.id = book_authors.book_id
-        //     JOIN authors ON book_authors.auth_id = authors.id
-        //     WHERE users.id = $1;
-        // `;
-        // const result = await db.query(query, [session_user]);
         return res.json(public_books.rows);
     } catch (error) {
         console.error(error);
@@ -70,9 +60,9 @@ router.get('/public_books', async (req, res) => {
             attributes: ['title']
         })
 
-        const result = await db.query(query);
+        const bookTitles = public_books(book => book.title);
 
-        return res.json(result.rows);
+        return res.json(bookTitles);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Internal Server Error' });

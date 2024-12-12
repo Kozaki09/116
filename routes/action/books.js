@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../../db');
 
-const { Book } = require('../../models');
+const { Book } = require('../..');
 
 router.post('/submit_book', async (req,res) => {
     try {

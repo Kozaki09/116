@@ -8,7 +8,7 @@ const pool = new Pool({
     ssl: { rejectUnauthorized: false },    // Adjust SSL settings based on your server
 });
 
-const sequelize = new sequelize('database_name', 'username', 'password', {
+const sequelize = new Sequelize('database_name', 'username', 'password', {
     host: 'localhost',
     dialect: 'postgres',
 });
