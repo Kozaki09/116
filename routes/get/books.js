@@ -1,23 +1,30 @@
 const express = require('express');
-const router = express.Rooks();
+const router = express.Router();
 const db = require('../../db')
 
 // route for user owned books
 router.get('/my_books', async (req, res) =>{
     try{
         const session_user = req.session.user_id;
+
+        if (!session_user) {
+            return res.status(401).json({ error: 'Unauthorized' });
+        }
+
         const query = `
-        SELECT books.title, books.author 
-        FROM books 
-        JOIN book_copies ON book_copies.book_id = books.id 
-        JOIN users ON book_copies.user_id = users.id 
-        WHERE users.id = $1
+            SELECT books.title, authors.auth_name 
+            FROM books
+            JOIN book_copies ON books.id = book_copies.book_id
+            JOIN users ON users.id = book_copies.user_id
+            JOIN book_authors ON books.id = book_authors.book_id
+            JOIN authors ON book_authors.auth_id = authors.id
+            WHERE users.id = $1;
         `;
         const result = await db.query(query, [session_user]);
         return res.json(result.rows);
     } catch (error) {
         console.error(error);
-        res.sendStatus(500);
+        res.status(500).json({ error: 'Internal Server Error' });
     }
 })
 
@@ -25,7 +32,7 @@ router.get('/my_books', async (req, res) =>{
 router.get('/public_books', async (req, res) => {
     try {
         const query = `
-        SELECT title, author FROM books WHERE availability = 'PUBLIC'
+        SELECT title FROM books WHERE availability = 'PUBLIC'
         `;
 
         const result = await db.query(query);
@@ -33,6 +40,7 @@ router.get('/public_books', async (req, res) => {
         return res.json(result.rows);
     } catch (error) {
         console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
     }
 });
 

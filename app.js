@@ -33,6 +33,10 @@ app.get('/', (req, res) => {
     }
 });
 
+app.get('/submit_book', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'submit.html'));
+});
+
 app.post('/login', async (req, res) => {
     const { email, password } = req.body;
     try {
@@ -121,6 +125,5 @@ async function hashPassword(password) {
 
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
-    const res = client.query('SELECT NOW()'); 
-    console.log('Database connection successful, server time:', res.rows[0].now);  
+    db.testConnection(); 
 });
