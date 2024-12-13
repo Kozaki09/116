@@ -3,21 +3,13 @@ const path = require('path');
 const bcrypt = require('bcryptjs');
 const session = require('express-session');
 const db = require('./db');
-const routes = require('./routes')
 require('dotenv').config();
-const { sequelize } = require('./models');
-
-sequelize.sync({ force: false })  // Set 'force: true' for resetting the database
-  .then(() => {
-    console.log('Database synchronized');
-  })
-  .catch(err => {
-    console.error('Failed to synchronize database:', err);
-  });
 
 const app = express();
 const port = 3000;
 const saltRounds = 10;
+const routes = require('./routes/index');
+const exp = require('constants');
 
 app.use(express.urlencoded({extended: true}));
 
@@ -29,21 +21,29 @@ app.use(session({
 
 // db.testConnection();
 let isLoggedIn = false;
+let isAdmin = false;
 routes(app); 
 
+app.use('/css', express.static(path.join(__dirname, 'html/css')));
+app.use('/public', express.static(path.join(__dirname, 'html/public')));
+app.use('/private', express.static(path.join(__dirname, 'html/private')));
 
-app.use(express.static(path.join(__dirname, 'public')));
+routes(app); 
 
 app.get('/', (req, res) => {
     if (!isLoggedIn) {
-        res.sendFile(path.join(__dirname, 'public', 'login_create.html'));
+        res.sendFile(path.join(__dirname, 'html/public', 'login_create.html'));
     } else {
-        res.sendFile(path.join(__dirname, 'public', 'dashboard.html'));
+        if (isAdmin) {
+            res.sendFile(path.join(__dirname, 'html/private', 'dashboard.html'));
+        } else {
+            res.sendFile(path.join(__dirname, 'html/public', 'dashboard.html'));
+        }
     }
 });
 
 app.get('/submit_book', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'submit.html'));
+    res.sendFile(path.join(__dirname, 'html', 'public', 'submit.html'));
 });
 
 app.post('/login', async (req, res) => {

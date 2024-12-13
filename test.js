@@ -14,7 +14,7 @@ query5 = `
 // db.query(query1);
 // db.query(query2, ["NISIOISIN"]);
 // db.query(query4, ["978-4-06-283602-9", "Bakemonogatari (Vol. 1)", "NISIOISIN", "November 2, 2006"]);
-db.query(query5, [1, 1]);
+// db.query(query5, [1, 1]);
 
 
 console.log("Querry Done.")

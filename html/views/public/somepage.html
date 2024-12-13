@@ -1,0 +1,23 @@
+<!-- views/public/somepage.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Books</title>
+    <link rel="stylesheet" href="/css/general.css">  <!-- Example CSS -->
+</head>
+<body>
+
+    <div class="container">
+        <!-- Include the Sidebar -->
+        <%- include('../partials/sidebar') %>
+        
+        <div class="content">
+            <h1>Welcome to My Books, <%= username %>!</h1>
+            <!-- Other content specific to this page -->
+        </div>
+    </div>
+
+</body>
+</html>
