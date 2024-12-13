@@ -13,7 +13,6 @@ const query = async (text, params) => {
         const client = await pool.connect();  // Get a client from the pool
         const res = await client.query(text, params);  // Run the query
         client.release();  // Release the client back to the pool
-        console.log("Database Connected")
         return res;  // Return the result of the query
     } catch (err) {
         console.error('Error executing query:', err.stack);

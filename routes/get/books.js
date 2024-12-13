@@ -1,48 +1,40 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../../db');
+const { isAuthenticated, isOwned } = require('../../middleware/auth');
+const { getBookCopy, getMyLibrary, getPublicLibrary } = require('../../utils/dbHelpers');
 
 // route for user owned books
-router.get('/my_books', async (req, res) =>{
+router.get('/my_library', isAuthenticated, async (req, res) =>{
     try{
-        const session_user = req.session.user_id;
-
-        if (!session_user) {
-            return res.status(401).json({ error: 'Unauthorized' });
-        }
-
-        const query = `
-            SELECT books.title, authors.auth_name
-            FROM books
-            JOIN book_copies ON books.id = book_copies.book_id
-            JOIN users ON users.id = book_copies.user_id
-            JOIN book_authors ON books.id = book_authors.book_id
-            JOIN authors ON authors.id = book_authors.auth_id
-            WHERE users.id = $1;
-        `;
-
-        const result = await db.query(query, [session_user]);
+        const result = await getMyLibrary(req.session.user_id);
 
         return res.json(result.rows);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
-})
+});
 
 // route for public books
 router.get('/public_books', async (req, res) => {
     try {
-        const query = `
-            SELECT title FROM books WHERE availability = 'PUBLIC'
-        `;
-
-        const result = await db.query(query);
+        const result = await getPublicLibrary();
 
         return res.json(result.rows);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+router.get('/book/:id', isOwned, async (req, res) => {
+    const book_id = req.params.id;
+    try {
+        const details = getBookCopy(book_id);
+        res.render('book', { book: details });
+    } catch (error) {
+        console.error('Error trying to display book: ', error);
+        res.status(500).send('Internal Server Error');
     }
 });
 

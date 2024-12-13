@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../../db');
 
 const { Book } = require('../../test');
 
@@ -12,7 +11,7 @@ router.post('/newBook', async (req,res) => {
         const bookData = {  
             title,
             isbn,
-            publication: publication || "Unknown",
+            publication: publication || null,
             availability: availability.toUpperCase()
         };
 
@@ -87,7 +86,7 @@ router.post('/my_library', async (req, res) => {
 });
 
 const newBook = async (bookData) => {
-    const query = `INSERT INTO books (title, isbn, year_publication, availability)
+    const query = `INSERT INTO books (title, isbn, publication, availability)
         VALUES ($1, $2, $3, $4) RETURNING id;
         `;
 
