@@ -35,7 +35,7 @@ router.post('/newBook', async (req,res) => {
             for (const author of authorList) {
                 const get = ["id"];
                 const filters = {auth_name: author};
-                const author_id = await buildSearchQuery("authors", get, filters);
+                let author_id = await buildSearchQuery("authors", get, filters);
 
                 if (author_id.rows.length === 0) {
                     author_id = await buildInsertQuery("authors", {auth_name: author}, "id");
@@ -45,7 +45,8 @@ router.post('/newBook', async (req,res) => {
             }
         }
 
-        const newBook_id = await buildInsertQuery("books", insertBook);                                 // insert to server library
+        const result = await buildInsertQuery("books", insertBook, "id");                                 // insert to server library
+        const newBook_id = result.rows[0].id;
         await buildInsertQuery("book_copies", {book_id: newBook_id, user_id: req.session.user_id});     // insert to user library
         for (const auth_id of authListID) {                                                             // set book author(s)
             await buildInsertQuery("book_authors", {book_id: newBook_id, auth_id: auth_id});
