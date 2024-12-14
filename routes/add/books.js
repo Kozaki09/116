@@ -18,8 +18,8 @@ router.post('/newBook', async (req,res) => {
             availability: (availability && availability.toUpperCase()) || 'PUBLIC'
         };
 
-        const isbn_check = await buildSearchQuery("books", filters);
-        if (isbn_check.rows.length > 0) {
+        const isbn_check = await buildSearchQuery("books", [], filters);
+        if (isbn_check.rowCount > 0) {
             return res.send(`
                 <script>
                     alert('ISBN already exists in library!');
