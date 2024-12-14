@@ -1,5 +1,5 @@
 const { sendHtmlFile, redirectBack } = require('../utils/helpers');
-const { getBookCopy, isPublic } = require('../utils/dbHelpers');
+const { buildSearchQuery, isPublic } = require('../utils/dbHelpers');
 
 function isAuthenticated(req, res, next) {
     if (req.session.isLoggedIn) {
@@ -13,12 +13,18 @@ function isOwned(req, res, next) {
     const book_id = req.params.id;
     const user_id = req.session.user_id;
 
+    filters = {
+        book_id: req.params.id,
+        user_id: req.session.user_id
+    }
+
+
     if (isPublic) {
         return next();
     }
 
     try {
-        const result = getBookCopy(user_id, book_id);
+        const result = buildSearchQuery("book_copies", [], filters);
 
         if (result.rows.length > 0) {
             return next();

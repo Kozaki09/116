@@ -2,12 +2,14 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db/index');
 const { hashPassword, comparePassword } = require('../utils/helpers');
-const { findByEmail, createUser } = require('../utils/dbHelpers');
+const {  buildSearchQuery, buildInsertQuery } = require('../utils/dbHelpers');
 
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
+    const filters = {email: email};
+
     try {
-        const results = await findByEmail(email);
+        const results = await buildSearchQuery("users", [], filters);
         if (results.rows.length == 0) {
             return res.send(`
                 <script>
@@ -43,8 +45,15 @@ router.post('/login', async (req, res) => {
 
 router.post('/create', async (req, res) => {
     const { username, email, password } = req.body;
+    const filters = {email: email};
+    const insert = {
+        email: email,
+        username: await hashPassword(password),
+        password: password
+    };
+
     try {
-        const results = await findByEmail(email);
+        const results = await buildSearchQuery("users", [], filters);
         if (results.rows.length > 0) {
             return res.send(`
                 <script>
@@ -54,8 +63,7 @@ router.post('/create', async (req, res) => {
                 `)
         }
 
-        const hash = await hashPassword(password);
-        await createUser(username, email, hash);
+        await buildInsertQuery("users", insert);
         return res.send(`
             <script>
                 alert('Account Succesfully Created. Please Log in');

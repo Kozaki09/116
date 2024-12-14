@@ -1,13 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const { isAuthenticated, isOwned } = require('../../middleware/auth');
-const { getBookCopy, getMyLibrary, getPublicLibrary } = require('../../utils/dbHelpers');
+const { buildBookQuery, getBookCopy, getMyLibrary, getPublicLibrary, getBook, getUserCopy } = require('../../utils/dbHelpers');
 
 // route for user owned books
 router.get('/my_library', isAuthenticated, async (req, res) =>{
-    try{
-        const result = await getMyLibrary(req.session.user_id);
+    filters = {user_id: req.session.user_id};
 
+    try{
+        const result = await buildBookQuery(filters);
         return res.json(result.rows);
     } catch (error) {
         console.error(error);
@@ -17,8 +18,9 @@ router.get('/my_library', isAuthenticated, async (req, res) =>{
 
 // route for public books
 router.get('/public_books', async (req, res) => {
+    filter = {}
     try {
-        const result = await getPublicLibrary();
+        const result = await buildBookQuery();
 
         return res.json(result.rows);
     } catch (error) {
@@ -27,11 +29,21 @@ router.get('/public_books', async (req, res) => {
     }
 });
 
-router.get('/book/:id', isOwned, async (req, res) => {
-    const book_id = req.params.id;
+router.get('/book', isOwned, async (req, res) => {
+    const book_id = req.query.book_id;
+    const user = {
+        id: req.session.user_id,
+        name: req.session.user_name,
+        role: req.session.isAdmin ? "Admin" : "User"
+    }
+    filters = { book_id: book_id };
     try {
-        const details = getBookCopy(book_id);
-        res.render('book', { book: details });
+
+        const details = await buildBookQuery(filters);
+        const result = await getUserCopy(user.id, book_id);
+        const isOwned = result.rows.length > 0;
+
+        res.render('book', { book: details.rows[0], isOwned: isOwned, user });
     } catch (error) {
         console.error('Error trying to display book: ', error);
         res.status(500).send('Internal Server Error');

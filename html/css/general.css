@@ -96,3 +96,46 @@ th {
         font-size: 14px;
     }
 }
+
+.trash-button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center; 
+}
+
+.trash-icon {
+    width: 30px;
+    height: 30px;
+    background-color: #ff6347;
+    clip-path: polygon(0% 15%, 100% 15%, 100% 100%, 0% 100%);
+    position: relative;
+}
+
+.trash-icon:before {
+    content: "";
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background-color: white;
+    top: 7px;
+    left: 10px;
+    clip-path: circle(50%);
+}
+
+.trash-icon:after {
+    content: "";
+    position: absolute;
+    width: 5px;
+    height: 10px;
+    background-color: white;
+    top: 2px;
+    left: 13px;
+}
+
+.trash-icon:hover {
+    background-color: #dc143c;
+}

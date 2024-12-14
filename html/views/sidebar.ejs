@@ -1,8 +1,7 @@
-<!-- sidebar.html -->
 <div class="sidebar">
     <div class="user-info">
-        <h3>John Doe</h3>
-        <p>Library Manager</p>
+        <h3><%= user.uname || 'John Doe' %></h3>   <!-- Use dynamic data for user name -->
+        <p><%= user.role || 'Library Manager' %></p>   <!-- Use dynamic data for user role -->
     </div>
 
     <div class="menu">
@@ -13,6 +12,6 @@
     </div>
 
     <div class="footer">
-        &copy; 2024 Your Library
+        &copy; <%= new Date().getFullYear() %> Your Library  <!-- Dynamic year -->
     </div>
-</div>
+</div>  

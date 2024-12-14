@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="/css/general.css"> <!-- General styles -->
+    <link rel="stylesheet" href="/css/sidebar.css"> <!-- Specific styles for login/create page -->
+    <link rel="stylesheet" href="/css/book.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <title><%= book.title %></title>
+</head>
+<body>
+    <div id="sidebar-container"><%- include('sidebar') %></div>
+
+    <div class="container">
+        <header>
+            <h1 class="book-title"><%= book.title %></h1>
+        </header>
+        <div class="book-details">
+            <div class="book-info">
+                <p><strong>Author:</strong> <%= book.auth_name %></p>
+                <p><strong>ISBN:</strong> <%= book.isbn %></p>
+                <p><strong>Description:</strong> <%= book.description %></p>
+            </div>
+            <% if (!isOwned) { %> 
+                <div class="action-container">
+                    <button class="btn add-to-library" onclick="addToLibrary(<%= book.id %>)">Add to Library</button>
+                </div>
+            <% } else { %>
+                <button class="delete-btn" onclick= "deleteBook(<%= book.id %>)">
+                    <span class="material-icons">delete</span>
+                </button>
+            <% } %>
+        </div>
+        <footer>
+            <a href="/browse" class="back-btn">Back to Browse</a>
+        </footer>
+    </div>
+
+    <script>
+        // Function to load the sidebar dynamically
+        async function loadSidebar() {
+            try {
+                const response = await fetch('/public/sidebar.html');
+                const sidebarHTML = await response.text();
+
+                // Insert sidebar HTML into the container
+                document.getElementById('sidebar-container').innerHTML = sidebarHTML;
+            } catch (error) {
+                console.error('Error loading the sidebar:', error);
+            }
+        }
+
+        // document.addEventListener('DOMContentLoaded', loadSidebar);
+
+        function addToLibrary(book_id) {
+            console.log('Adding book with ID:', book_id);
+            fetch(`/add/my_library?book_id=${book_id}`, {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+            })
+            .catch(error => {
+                console.error('Error adding to library:', error);
+            });
+            location.reload();
+        }
+
+        async function deleteBook(book_id) {
+            try {
+                console.log(book_id);
+                const response = await fetch(`/remove/from_library?book_id=${book_id}`, {
+                    method: 'DELETE',
+                });
+
+                console.log("DEBUG");
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(`Failed to delete book. Status: ${response.status}`);
+                }
+
+                window.location.href = '/';
+            } catch (error) {
+                console.error('Error deleting book:', error);
+                alert('Failed to delete the book. Please try again.');
+            }
+        }
+    </script>
+</body>
+</html>

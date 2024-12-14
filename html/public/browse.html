@@ -69,10 +69,17 @@
                 const row = document.createElement('tr');
 
                 const titleCell = document.createElement('td');
-                titleCell.textContent = book.title;
+                const titleLink = document.createElement('a');
+                titleLink.textContent = book.title;
+                titleLink.href = `get/book?book_id=${book.id}`;
+                titleCell.appendChild(titleLink);
 
                 const authorCell = document.createElement('td');
-                authorCell.textContent = book.auth_name; 
+                authorCell.textContent = book.auth_name
+                const authorLink = document.createElement('a');
+                authorLink.textContent - book.auth_name;
+                authorLink.href = `get/author?auth_name=${book.auth_name}`;
+                authorCell.appendChild(authorLink);
 
                 const publisherCell = document.createElement('td');
                 publisherCell.textContent = book.publisher; 

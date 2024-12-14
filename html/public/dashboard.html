@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="/css/general.css"> <!-- General styles -->
     <link rel="stylesheet" href="/css/dashboard.css"> <!-- Specific styles for dashboard page -->
     <link rel="stylesheet" href="/css/sidebar.css"> <!-- Specific styles for login/create page -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body>
     <div id="sidebar-container"></div>
@@ -75,7 +76,7 @@
                     const titleCell = document.createElement('td');
                     const titleLink = document.createElement('a');
                     titleLink.textContent = book.title;
-                    titleLink.href = `/get/book/${book.id}`;
+                    titleLink.href = `/get/book?book_id=${book.id}`;
                     titleCell.appendChild(titleLink);
 
                     const authorCell = document.createElement('td');
@@ -85,10 +86,16 @@
                     authorCell.append(authorlink);
 
                     const actionCell = document.createElement('td');
+
                     const deleteButton = document.createElement('button');
-                    deleteButton.textContent = 'Delete';
                     deleteButton.classList.add('delete-btn');
-                    deleteButton.onclick = () => deleteBook(book.id); // Attach event handler
+                    deleteButton.onclick = () => deleteBook(book.id);
+
+                    const trashIcon = document.createElement('span');
+                    trashIcon.classList.add('material-icons');
+                    trashIcon.textContent = 'delete';
+
+                    deleteButton.prepend(trashIcon);
 
                     actionCell.appendChild(deleteButton);
 
@@ -107,17 +114,12 @@
         }
 
         // Function to delete a book
-        async function deleteBook(bookID) {
+        async function deleteBook(book_id) {
             try {
-                const response = await fetch('/remove/from_library', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ book_id: bookID }),
-                });
+                const response = await fetch(`/remove/from_library?book_id=${book_id}`, {
+                    method: 'DELETE',
+                }); 
 
-                console.log("DEBUG");
                 const result = await response.json();
 
                 if (!response.ok) {
