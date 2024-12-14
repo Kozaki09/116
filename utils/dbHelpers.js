@@ -109,7 +109,6 @@ async function buildRemoveQuery(tablename, filters = {}) {
 
     query += ` WHERE ${conditions.join(" AND ")}`;
     try {
-        console.log(query);
         return await db.query(query, values);
     } catch (error) {
         console.error('Error processing delete query: ');
@@ -129,10 +128,12 @@ async function buildInsertQuery(tablename, data, returning = false) {
     const placeholders = columns.map((_, index) => `$${index + 1}`);
     const values = Object.values(data);
 
-    const query = `INSERT INTO ${tablename} (${columns.join(", ")}) VALUES (${placeholders.join(", ")})`;
+    let query = `INSERT INTO ${tablename} (${columns.join(", ")}) VALUES (${placeholders.join(", ")})`;
     if (returning) {
         query += ` RETURNING ${returning}`;
     }
+    console.log(query);
+    console.log(`table: ${tablename} values: `, values);
 
     try {
         return await db.query(query, values);
