@@ -1,19 +1,18 @@
-const db = require('./db/index');
 const express = require('express');
 const session = require('express-session');
-const { isAuthenticated } = require('./middleware/auth'); 
-const { serveStaticFiles, sendHtmlFile } = require('./utils/helpers');
 require('dotenv').config();
+const { serveStatic, resolvePath, getSession, formatBookResults } = require('./utils/helpers');
 
-const app = express();
+const db = require('./db/index');
+const routes = require('./routes/index');
+const { isAuthenticated } = require('./middleware/auth');
+const { buildBookQuery } = require('./middleware/query-builders');
+
+const app = express();  
 const port = 3000;
-
-app.set('view engine', 'ejs');
-app.set('views', './html/views');
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
-const routes = require('./routes/index');
 
 app.use(session({
     secret: 'your-secret-key',
@@ -21,32 +20,34 @@ app.use(session({
     saveUninitialized: true
 }));
 
+app.use('/css', serveStatic('views/css'));
+app.use('/partial', serveStatic('views/partial'));
+
 routes(app); 
 
-app.use('/css', serveStaticFiles('html/css'));
-app.use('/public', serveStaticFiles('html/public'));
-app.use('/private', serveStaticFiles('html/private'));
-// app.use('/css', express.static(path.join(__dirname, 'html/css')));
-// app.use('/public', express.static(path.join(__dirname, 'html/public')));
-// app.use('/private', express.static(path.join(__dirname, 'html/private')));
+app.set('view engine', 'ejs');
+app.set('views', resolvePath('views'));
 
-app.get('/', isAuthenticated, (req, res) => {
-    if (req.session.isAdmin) {
+app.get('/', isAuthenticated, async (req, res) => {
+    const user = getSession(req);
+
+    filters = {user_id: user.id};
+    const results = await buildBookQuery(filters);
+    const books = formatBookResults(results);
+
+    if (user.isAdmin) {
         return sendHtmlFile(res, 'private/dashboard.html');
-    } else {
-        return sendHtmlFile(res, 'public/dashboard.html');
-    }
-});
-
-app.get('/submit_book', isAuthenticated, (req, res) => {
-    return sendHtmlFile(res, 'public/submit.html');
-}); 
-
-app.get('/browse', isAuthenticated, (req, res) => {
-    return sendHtmlFile(res, 'public/browse.html')
+    } 
+        
+    return res.render('public/dashboard', { 
+        books: books, 
+        user: user 
+    });
+        // return sendHtmlFile(res, 'public/dashboard.html');
 });
 
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
-    db.testConnection(); 
-});
+    db.testConnection();
+})
+

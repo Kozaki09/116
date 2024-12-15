@@ -1,12 +1,12 @@
-const { where } = require('sequelize');
 const db = require('../db/index');
 
 async function buildBookQuery(filters = {}) {
     // base query
     let query = `
-    SELECT books.*, authors.auth_name 
+    SELECT books.*, authors.auth_name, book_authors.auth_id, publishers.pub_name 
     FROM books 
-    LEFT JOIN book_authors ON books.id = book_authors.book_id 
+    LEFT JOIN book_authors ON books.id = book_authors.book_id
+    LEFT JOIN publishers ON books.pub_id = publishers.id
     LEFT JOIN authors ON authors.id = book_authors.auth_id
     `;  
 
@@ -19,13 +19,15 @@ async function buildBookQuery(filters = {}) {
         LEFT JOIN users ON users.id = book_copies.user_id`;
         whereClause += ' AND book_copies.user_id = $' + (parameters.length + 1);
         parameters.push(filters.user_id);
-    } else {
-        whereClause += ` AND books.availability = 'PUBLIC'`;
+    } 
+    
+    if (filters.public) {
+        whereClause += ` OR books.availability = 'PUBLIC'`;
     }
 
     if (filters.title) {
-        whereClause += ' AND title ILIKE = $' + (parameters.length + 1);
-        parameters.push(filters.title);
+        whereClause += ' AND title ILIKE $' + (parameters.length + 1);
+        parameters.push('%' + filters.title + '%');
     } 
     
     if (filters.isbn) {
@@ -44,7 +46,6 @@ async function buildBookQuery(filters = {}) {
     }
 
     query += whereClause;
-
     try {
         if (filters.email) {
             return await db.query('SELECT * FROM users where email = $1', [filters.email]);
@@ -122,7 +123,7 @@ async function buildInsertQuery(tablename, data, returning = false) {
     }
     
     if (!data || typeof data !== "object" || Object.keys(data).length === 0) {
-        throw new Error("Data must be non-empty object.")
+        throw new Error("Data must be non-empty object.");
     }
     const columns = Object.keys(data);
     const placeholders = columns.map((_, index) => `$${index + 1}`);
@@ -132,8 +133,6 @@ async function buildInsertQuery(tablename, data, returning = false) {
     if (returning) {
         query += ` RETURNING ${returning}`;
     }
-    console.log(query);
-    console.log(`table: ${tablename} values: `, values);
 
     try {
         return await db.query(query, values);
@@ -143,109 +142,50 @@ async function buildInsertQuery(tablename, data, returning = false) {
     }
 }
 
-async function createUser(username, email, password) {
-    try {
-        const result = await db.query('INSERT INTO users (username, email, password) VALUES ($1, $2, $3)', [username, email, password]);
-        return;
-    } catch (error) {
-        console.error('Error inserting new account: ', error);
-        throw new Error('Failed to remove book from library');
+async function buildUpdateQuery(tablename, data = {}, filters = {}) {
+    if (!tablename || typeof tablename !== "string") {
+        throw new Error("Table name must be a valid string.");
     }
-}
 
-async function findBookByTitle(book_title) {
-
-}
-
-async function removeFromLibrary(book_id, user_id) {
-    try {
-        return await db.query('DELETE FROM book_copies WHERE book_id = $1 AND user_id = $2', [book_id, user_id]);
-    } catch (error) {
-        console.error('Error removing book from user library: ', error);
-        throw error;
+    if (!data || Object.keys(data).length === 0 || typeof data !== "object") {
+        throw new Error("Data must be non-empty object.");
     }
-}
 
-async function getMyLibrary(user_id) {
-    try {
-        return await db.query(`
-            SELECT books.*, authors.auth_name
-            FROM books
-            JOIN book_copies ON books.id = book_copies.book_id
-            JOIN users ON users.id = book_copies.user_id
-            JOIN book_authors ON books.id = book_authors.book_id
-            JOIN authors ON authors.id = book_authors.auth_id
-            WHERE users.id = $1;
-        `, [user_id]);
-    } catch (error) {
-        console.error('Error retrieving personal libray: ', error);
-        throw error;
+    if (typeof filters !== "object" || Object.keys(filters).length === 0) {
+        throw new Error("At least one filter condition must be provided.");
     }
+
+    let query = `UPDATE ${tablename} SET `;
+    const columns = [];
+    const conditions = [];
+    const values = [];
+
+    let index = 1;
+    Object.entries(data).forEach(([key, value]) => {
+        if (value !== null) {
+            columns.push(` ${key} = $${index}`);
+            values.push(value);
+            index++;
+        }
+    });
+
+    Object.entries(filters).forEach(([key, value]) => {
+        conditions.push(` ${key} = $${index}`);
+        values.push(value);
+        index++;
+    });
+
+    query += columns.join(', ');
+    query += " WHERE " + conditions.join(' AND ');
+
+    console.log(query);
+    return await db.query(query, values);
 }
-
-async function getPublicLibrary() {
-    try {
-        return await db.query(`
-            SELECT books.*, authors.auth_name
-            FROM books 
-            JOIN book_authors ON books.id = book_authors.book_id
-            JOIN authors ON authors.id = book_authors.auth_id
-            WHERE books.availability = 'PUBLIC'
-        `);
-        
-    } catch (error) {
-        console.error('Error retrieving public library: ', error);
-        throw error;
-    }
-}
-
-async function getUserCopy(user_id, book_id) {
-    try {
-        return await db.query(`
-            SELECT books.*
-            FROM books
-            JOIN book_copies ON $1 = book_copies.book_id
-            WHERE $2 = book_copies.user_id
-            `, [book_id, user_id]);
-    } catch (error) {
-        console.error('Error retrieving book: ', error);
-        throw error;
-    }
-}
-
-async function getBook(book_id) {
-    try {
-        return await db.query(`SELECT * FROM books where books.id = $1`, [book_id]);
-    } catch (error) {
-        console.error('Error trying to get book details: ', error);
-        throw error;
-    }   
-}
-
-async function isPublic(book_id) {
-    try {
-        const results = await db.query('SELECT availability FROM books where id = $1', [book_id]);
-        if (results.rows.length > 0 && results.rows[0].availability == "PUBLIC") {
-            return true;
-        } 
-
-        return false;
-    } catch (error) {
-        console.error('Error retrieving book availabilty: ', error);
-        throw error;
-    }
-} 
 
 module.exports = {
-    createUser,
     buildBookQuery,
-    buildSearchQuery,
     buildInsertQuery,
     buildRemoveQuery,
-    removeFromLibrary,
-    getMyLibrary,
-    getPublicLibrary,
-    getUserCopy,
-    getBook,
-    isPublic,
+    buildSearchQuery,
+    buildUpdateQuery,
 }

@@ -1,14 +1,11 @@
-
-const addBooks = require('./add/books');
-const getBooks = require('./get/books');
-const removeBooks = require('./remove/books');
+const addRoute = require('./add');
+const getRoute = require('./get');
 const authRoute = require('./auth');
+const removeRoute = require('./remove');
 
 module.exports = (app) => {
+    app.use('/add', addRoute);
+    app.use('/get', getRoute);
     app.use('/auth', authRoute);
-    app.use('/add', addBooks);
-    app.use('/get', getBooks);
-    app.use('/remove', removeBooks,);
-    // app.use('/api', update);
-    // app.use('/api', destroy);
-};
+    app.use('/remove', removeRoute);
+}

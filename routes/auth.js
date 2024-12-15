@@ -1,22 +1,20 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../db/index');
 const { hashPassword, comparePassword } = require('../utils/helpers');
-const {  buildSearchQuery, buildInsertQuery } = require('../utils/dbHelpers');
+const {  buildSearchQuery, buildInsertQuery } = require('../middleware/query-builders');
 
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
-    const filters = {email: email};
 
     try {
-        const results = await buildSearchQuery("users", [], filters);
-        if (results.rows.length == 0) {
+        const results = await buildSearchQuery("users", [], {email: email});
+        if (results.rowCount === 0) {
             return res.send(`
                 <script>
                     alert('Email user not found!');
-                    window.location.href = '/';
+                    window.location.href = '/';   
                 </script>
-                `)
+            `);
         }
 
         const user = results.rows[0];
@@ -26,76 +24,57 @@ router.post('/login', async (req, res) => {
                 <script>
                     alert('Wrong password!');
                     window.location.href = '/';
-                </script>
-                `)
+                </script>    
+            `)
         }
 
         req.session.isLoggedIn = true;
         req.session.user_id = user.id;
         req.session.user_name = user.username;
-        req.session.user_email = user.email;
-        req.session.isAdmin = user.isAdmin;
+        req.session.user_email = user.user_email;
+        req.session.isAdmind = user.isAdmin;
 
         return res.redirect('/');
     } catch (error) {
-        console.error('Error:', error);
+        console.error('Error: ', error);
         return res.sendStatus(500);
     }
-});
+})
 
 router.post('/create', async (req, res) => {
     const { username, email, password } = req.body;
-    const filters = {email: email};
     const insert = {
         email: email,
-        username: await hashPassword(password),
-        password: password
+        username: username,
+        password: await hashPassword(password)
     };
 
     try {
-        const results = await buildSearchQuery("users", [], filters);
-        if (results.rows.length > 0) {
+        const email_check = await buildSearchQuery("users", [], {email: email});
+        if (email_check.rowCount > 0) {
             return res.send(`
                 <script>
-                    alert('Email aready in use!');
+                    alert ('Email already in use!');
                     window.location.href = '/';
-                </script>
-                `)
-        }
-
-        await buildInsertQuery("users", insert);
-        return res.send(`
-            <script>
-                alert('Account Succesfully Created. Please Log in');
-                window.location.href = '/';
-            </script>
+                </script>    
             `)
-    } catch (err) {
-        console.error('Error: ', err);
-        return res.status(500).send(`
-            <script>
-                alert('An error occurred during account creation.');
-                window.location.href = '/';
-            </script>
-        `);
-    }
-});
-
-router.get('/logout', (req, res) => {
-    req.session.destroy((error) => {
-        if (error) {
-            console.log('Error destroying session: ', error);
-            return res.sendStatus(500);
         }
 
-        req.session.isLoggedIn = false;
-        req.session.user_id = null;
-        req.session.user_name = null;
-        req.session.user_email = null;
-        req.session.isAdmin = false;
-
-        res.redirect('/');
-    })
+        const results = await buildInsertQuery("users", insert);
+        if (results.rowCount > 0) {
+            return res.send(`
+                <script>
+                    alert('Account Succesfully Created. Please Log in.');
+                    window.location.href = '/';
+                </script>    
+            `)
+        } else {
+            throw new Error('No user row created.');
+        }
+    } catch (error) {
+        console.log('Error trying to create new account: ', error);
+        return res.sendStatus(500);
+    }
 })
 
 module.exports = router;

@@ -4,28 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Book Information Form</title>
-    <link rel="stylesheet" href="/css/general.css"> <!-- General CSS -->   
-    <link rel="stylesheet" href="/css/submit.css"> <!-- Specific CSS for book form -->
-    <link rel="stylesheet" href="/css/sidebar.css"> <!-- Sidebar CSS -->
+    <link rel="stylesheet" href="/css/general.css">
+    <link rel="stylesheet" href="/css/submit.css"> 
+    <link rel="stylesheet" href="/css/sidebar.css">
 </head>
 <body>
+    <div id="sidebar-container"><%- include('../partial/sidebar') %></div>
 
-    <!-- Sidebar Section (will be loaded dynamically here) -->
-    <div id="sidebar-container"></div>
-
-    <!-- Content Area: Submit Book Form -->
     <div class="content">
         <h1>Submit Book Information</h1>
         <form action="/add/newBook" method="POST">
-            <!-- Book Title -->
             <label for="title">Book Title:</label>
             <input type="text" id="title" name="title" placeholder="Enter the book title" required> 
 
-            <!-- ISBN -->
             <label for="isbn">ISBN:</label>
             <input type="text" id="isbn" name="isbn" placeholder="Enter the ISBN" required>
 
-            <!-- Availability Dropdown -->
             <label for="availability">Availability:</label>
             <select id="availability" name="availability" required>
                 <option value="public">Public</option>
@@ -33,46 +27,23 @@
                 <option value="unlisted">Unlisted</option>
             </select>
 
-            <!-- Line separator -->
             <hr class="line">
 
-            <!-- Optional Section Subheader -->
+            <!-- Optional Section -->
             <div class="optional-subheader">Optional:</div>
 
-            <!-- Author (optional) -->
             <label for="authors">Author(s):</label>
             <input type="text" id="authors" name="authors" placeholder="Enter author(s) name(s) (comma-separated)">
 
-            <!-- Publisher (optional) -->
             <label for="publisher">Publisher:</label>
             <input type="text" id="publisher" name="publisher" placeholder="Enter publisher">
 
-            <!-- Publication Date (optional) -->
             <label for="year">Publication Date:</label>
             <input type="number" id="publication" name="publication" placeholder="Enter the year of publication">
 
-            <!-- Submit Button -->
             <button type="submit">Submit Book</button>
         </form>
     </div>
-
-    <script>
-        // Function to load the sidebar dynamically
-        async function loadSidebar() {
-            try {
-                const response = await fetch('/public/sidebar.html');
-                const sidebarHTML = await response.text();
-
-                // Insert sidebar HTML into the container
-                document.getElementById('sidebar-container').innerHTML = sidebarHTML;
-            } catch (error) {
-                console.error('Error loading the sidebar:', error);
-            }
-        }
-
-        // Load the sidebar on page load
-        loadSidebar();
-    </script>
 
 </body>
 </html>
