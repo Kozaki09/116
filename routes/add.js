@@ -41,15 +41,16 @@ router.post('/book_submission', isAuthenticated, async (req, res) => {
             return res.status(409).send(`
                 <script>
                     alert('ISBN already exists in library!');
-                    window.location.href = '/submit_book';
+                    window.location.href = '/get/submit_book';
                 </script>
             `);
         }
 
         const authorList = authors.split(', ').map( a => a.trim());
         let authListID = [];
+        console.log(authorList);
 
-        if (authorList.rowCount > 0) {
+        if (authorList.length > 0) {
             for (const author of authorList) {
                 let author_id = await buildSearchQuery("authors", ["id"], {auth_name: author});
                 if (author_id.rowCount === 0) {
@@ -86,7 +87,7 @@ router.post('/book_submission', isAuthenticated, async (req, res) => {
         return res.status(500).send(`
                 <script>
                     alert('Failed to submit book.');
-                    window.location.href = /submit_book';
+                    window.location.href = /get/submit_book';
                 </script>
             `);
     }
