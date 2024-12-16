@@ -1,36 +1,95 @@
 const express = require('express');
 const router = express.Router();
-const { isAuthenticated } = require('../middleware/auth');
+const { isAuthenticated, isOwned } = require('../middleware/auth');
 const { getSession, formatBookResults } = require('../utils/helpers');
+const { buildInsertQuery, buildSearchQuery } = require('../middleware/query-builders');
 
-router.get('/', isAuthenticated, (req, res) => {
-    const user =  getSession(req);
+router.post('/to_my_library', isAuthenticated, async (req, res, next) => {
+    const  { book_id } = req.query.book_id;
+    const user = getSession(req);
+    req.book_id = book_id;
+    next();
+}, isOwned, async (req, res) => {
+    const user = getSession(req);
+
+    console.log('User id: ', user.id);
+    console.log('Book id: ', book_id);
+
     try {
-        if (user.isAdmin) {
-            const admin_results =  buildBookQuery();
-            const admin_books =  formatBookResults(admin_results);
+        await buildInsertQuery("book_copies", {user_id: user.id, book_id: book_id});
+        return res.json({ message: 'Book added to your library.'});
+    } catch (error) {
+        console.error('Error adding book to library:', error);
+        return res.status(500).json({ message: `Failed to add book to user library.`});
+    }
+})
 
-            return res.render('private/dashboard', {
-                books: admin_books,
-                user
-            })
+router.post('/book_submission', isAuthenticated, async (req, res) => {
+    const { title, isbn, authors, publisher, publication, availability } = req.body;
+    const user = getSession(req);
+    const insertBook = {
+        title: title,
+        isbn, isbn,
+        pub_id: null,
+        publication: publication || null,
+        availability: (availability && availability.toUpperCase()) || 'PUBLIC'
+    };
+
+    try {
+        const isbn_check = await buildSearchQuery("books", [], {isbn: isbn});
+        if (isbn_check.rowCount > 0) {
+            return res.status(409).send(`
+                <script>
+                    alert('ISBN already exists in library!');
+                    window.location.href = '/submit_book';
+                </script>
+            `);
         }
 
-        const user_results =  buildBookQuery({user_id: user.id});
-        const user_books =  formatBookResults(user_results);
+        const authorList = authors.split(', ').map( a => a.trim());
+        let authListID = [];
 
-        return res.render('public/dashboard', {
-            books: user_books,
-            user
-        });
+        if (authorList.rowCount > 0) {
+            for (const author of authorList) {
+                let author_id = await buildSearchQuery("authors", ["id"], {auth_name: author});
+                if (author_id.rowCount === 0) {
+                    author_id = await buildInsertQuery("authors", {auth_name: author}, "id");
+                }
+
+                authListID.push(author_id.rows[0].id);
+            }
+        }
+
+        const publisher_check = await buildSearchQuery("publishers", ["id"], {pub_name: publisher});
+        if (publisher_check.rowCount > 0) {
+            insertBook.pub_id = publisher_check.rows[0].id;
+        } else {
+            const result = await buildInsertQuery("publishers", {pub_name: publisher}, "id");
+            insertBook.pub_id = result.rows[0].id;
+        }
+
+        const result = await buildInsertQuery("books", insertBook, "id");
+        const newBook_id = result.rows[0].id;
+        await buildInsertQuery("book_copies", {book_id: newBook_id, user_id: user.id});
+        for (const auth_id of authListID) {
+            await buildInsertQuery("book_authors", {book_id: newBook_id, auth_id: auth_id});
+        }
+
+        return res.send(`
+                <script>
+                    alert('Book added.');
+                    window.location.href= '/';
+                </script>
+            `);
     } catch (error) {
-        console.error('Error retrieving dashboard: ', error);
-        return res.status(500);
+        console.error('Error submitting book: ', error);
+        return res.status(500).send(`
+                <script>
+                    alert('Failed to submit book.');
+                    window.location.href = /submit_book';
+                </script>
+            `);
     }
-}) 
-
-router.get('/submit_book', isAuthenticated,  (req, res) => {
-    res.render('public/submit_book')
-})
+});
 
 module.exports = router;

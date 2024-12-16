@@ -36,7 +36,7 @@ router.get('/book', isAuthenticated, async (req, res, next) =>{
         const isOwned = copy.rowCount > 0;
         const books = formatBookResults(results);
 
-        res.render('public/book', {
+        return res.render('public/book', {
             book: books[book_id],
             isOwned,
             user
@@ -46,5 +46,12 @@ router.get('/book', isAuthenticated, async (req, res, next) =>{
         return res.status(500).send('Internal Server Error');
     }
 });
+
+router.get('/submit_book', isAuthenticated, (req, res) => {
+    const user = getSession(req);
+    return res.render('public/submit_book', {user});
+});
+
+
 
 module.exports = router;
