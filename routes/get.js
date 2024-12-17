@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.get('/browse_books', isAuthenticated, async (req, res) => {
     const user = await getSession(req);
-    filters = {user_id: user.direction, public: true};
+    filters = {user_id: user.direction, public: true, sort: 'asc'};
 
     const results = await buildBookQuery(filters);
     const books = formatBookResults(results);

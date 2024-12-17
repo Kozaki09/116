@@ -32,7 +32,7 @@ app.set('views', resolvePath('views'));
 app.get('/', isAuthenticated, async (req, res) => {
     const user = getSession(req);
 
-    filters = {user_id: user.id};
+    filters = {user_id: user.id, sort: 'asc'};
     const results = await buildBookQuery(filters);
     const books = formatBookResults(results);
 
