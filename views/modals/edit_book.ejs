@@ -1,0 +1,43 @@
+<!-- Modal Overlay -->
+<div id="modal-overlay" onclick="closeModal()"></div>
+
+<!-- Edit Book Modal -->
+<div id="edit-book-modal">
+    <h1>Edit Book Form</h1>
+    <span class="close-btn" onclick="closeModal()">X</span>
+    <form id="edit-form" action="/edit/book" method="POST">
+        <input type="hidden" name="book_id" id="book_id">
+        
+        <label for="title">Title:</label>
+        <input type="text" id="title_input" name="title_input">
+        <input type="hidden" id="title_hidden" name="title">
+
+        <label for="isbn">ISBN:</label>
+        <input type="text" id="isbn_input" name="isbn_input">
+        <input type="hidden" id="isbn_hidden" name="isbn">
+
+        <label for="availability">Availability:</label>
+        <select id="availability_input" name="availability_input">
+          <option value="public">Public</option>
+          <option value="private">Private</option>
+          <option value="unlisted">Unlisted</option>
+        </select> 
+        <input type="hidden" id="availability_hidden", name="availability">
+
+        <label for="authors">Authors:</label>
+        <input type="text" id="authors_input" name="authors_input">
+        <input type="hidden" id="authors_hidden" name="authors">
+
+        <label for="publisher">Publisher:</label>
+        <input type="text" id="publisher_input" name="publisher_input">
+        <input type="hidden" id="publisher_hidden" name="publisher">
+
+        <label for="publication">Publication Year:</label>
+        <input type="text" id="publication_input" name="publication_input">
+        <input type="hidden" id="publication_hidden" name="publication">
+
+        <button type="submit">Save</button>
+        <button type="hidden" onclick="closeModal()">Cancel</button>
+    </form>
+</div>
+

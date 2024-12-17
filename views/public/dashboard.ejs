@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="/css/general.css"> <!-- General styles -->
     <link rel="stylesheet" href="/css/dashboard.css"> <!-- Specific styles for dashboard page -->
     <link rel="stylesheet" href="/css/sidebar.css"> <!-- Specific styles for login/create page -->
+    <link rel="stylesheet" href="/css/modal.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body>
@@ -35,6 +36,8 @@
         <div id="error" class="error" style="display: none;">Failed to load books. Please try again later.</div>
     </div>
 
+    <%- include('../modals/edit_book') %>
+
     <script>
         function fillTable() {
             try {
@@ -52,7 +55,6 @@
                 tableBody.innerHTML = '';
 
                 const viewRows = createViewRows(books);
-                const formRows = createFormRows(books);
 
                 length = viewRows.length;
                 if (length === 0) {
@@ -62,9 +64,6 @@
 
                 for (i = 0; i < length; i++) {
                     tableBody.appendChild(viewRows[i]);
-                    tableBody.appendChild(formRows[i]);
-
-                    formRows[i].style.display = 'none';
                 }
 
                 
@@ -122,6 +121,7 @@
 
                     const deleteButton = document.createElement('button');
                     deleteButton.classList.add('delete-btn');
+                    deleteButton.textContent = 'Remve from Library';
                     deleteButton.onclick = () => deleteBook(id);
 
                     const trashIcon = document.createElement('span');
@@ -133,7 +133,7 @@
                     editButton.textContent = 'Edit';
                     editButton.type = 'button';
                     editButton.addEventListener('click', function() {
-                        toggleForm(id);
+                        openModal(book);
                     })
 
                     actionCell.appendChild(deleteButton);
@@ -152,96 +152,50 @@
             return rows;
         }
 
-        function createFormRows(books) {
-            const rows = [];
+        function openModal(book) {
+            const modal = document.getElementById('edit-book-modal');
+            const overlay = document.getElementById('modal-overlay');
+            console.log(book.title);
+           // Prefill the modal form fields
+            modal.querySelector('#book_id').value = book.id;
 
-            Object.keys(books).forEach(id => {
-                const book = books[id];
+            // Title
+            modal.querySelector('#title_input').value = book.title || '';
+            modal.querySelector('#title_hidden').value = book.title || '';
 
-                const form = document.createElement('form');
-                const row = document.createElement('tr');
-                row.id = 'form_' + id;
+            // ISBN
+            modal.querySelector('#isbn_input').value = book.isbn || '';
+            modal.querySelector('#isbn_hidden').value = book.isbn || '';
 
-                // title columns
-                const titleCell = document.createElement('td');
-                const titleForm = document.createElement('input');
-                titleForm.value = book.title;
-                titleForm.type = 'text';
-                titleForm.name = 'title';
-                titleForm.requierd = true;
-                titleForm.placeholder = 'Book Title';
-                titleCell.appendChild(titleForm);
+            // Availability
+            modal.querySelector('#availability_input').value = book.availability || 'public';
+            modal.querySelector('#availability_hidden').value = book.availability || 'public';
 
-                // isbn columns
-                const isbnCell = document.createElement('td');
-                const isbnForm = document.createElement('input');
-                isbnForm.value = book.isbn;
-                isbnForm.type = 'text';
-                isbnForm.name = 'isbn';
-                isbnForm.required = true;
-                isbnForm.placeholder = 'ISBN';
-                isbnCell.appendChild(isbnForm);
+            // Authors
+            const authors = book.authors.map(author => author.name).join(', ');
+            modal.querySelector('#authors_input').value = authors || '';
+            modal.querySelector('#authors_hidden').value = authors || '';
 
-                // author columns
-                const authorCell = document.createElement('td');
-                const authorForm = document.createElement('input');
-                authorForm.value = book.authors.map(author => author.name).join(', ');
-                authorForm.type = 'text';
-                authorForm.name = 'authors';
-                authorForm.placeholder = 'Author(s)';
-                authorCell.appendChild(authorForm);
+            // Publisher
+            modal.querySelector('#publisher_input').value = book.publisher.name || '';
+            modal.querySelector('#publisher_hidden').value = book.publisher.name || '';
 
-                // publisher columns
-                const publisherCell = document.createElement('td');
-                const publisherForm = document.createElement('input');
-                publisherForm.value = book.publisher.name === 'Unknown' ? '' : book.publisher.name;
-                publisherForm.type = 'text';
-                publisherForm.name = 'publisher';
-                publisherForm.placeholder = 'Publisher';
-                publisherCell.appendChild(publisherForm);
-
-                // publication columns
-                const publicationCell = document.createElement('td');
-                const publicationForm = document.createElement('input');
-                publicationForm.value = book.publication === 'Unknown' ? '' : book.publication;
-                publicationForm.type = 'number';
-                publicationForm.name = 'publication';
-                publicationForm.placeholder = 'Publication Year';
-                publicationCell.appendChild(publicationForm);
-
-                // button columns
-                const actionCell = document.createElement('td');
-
-                const submitButton = document.createElement('button');
-                submitButton.textContent = 'Submit';
-                submitButton.type = 'button';
-                submitButton.addEventListener('click', function(event) {
-                    event.preventDefault(); 
-                    form.submit();
-                })
-
-                const cancelButton = document.createElement('button');
-                cancelButton.textContent = 'Cancel';
-                cancelButton.type = 'button';
-                cancelButton.addEventListener('click', function()  {
-                    toggleForm(id);
-                })
-
-                actionCell.appendChild(submitButton);
-                actionCell.appendChild(cancelButton);
-
-                row.appendChild(titleCell);
-                row.appendChild(isbnCell);
-                row.appendChild(authorCell);
-                row.appendChild(publisherCell);
-                row.appendChild(publicationCell);
-                row.appendChild(actionCell);
-                form.appendChild(row);
-
-                rows.push(row);
-            });
+            // Publication Year
+            modal.querySelector('#publication_input').value = book.publication || '';
+            modal.querySelector('#publication_hidden').value = book.publication || '';
             
-            return rows;
+            // Show the modal and overlay
+            modal.style.display = 'block';
+            overlay.style.display = 'block';
+        }
+
+        // Function to close the modal
+        function closeModal() {
+            const modal = document.getElementById('edit-book-modal');
+            const overlay = document.getElementById('modal-overlay');
+            
+            modal.style.display = 'none';
+            overlay.style.display = 'none';
         }
 
         function toggleForm(id) {

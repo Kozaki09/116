@@ -188,3 +188,7 @@ input, select, button {
         font-size: 14px;
     }
 }
+
+.modal {
+    display: none,
+}

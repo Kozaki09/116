@@ -131,3 +131,7 @@ th {
 .trash-icon:hover {
     background-color: #dc143c;
 }
+
+.modal {
+    display: none,
+}
