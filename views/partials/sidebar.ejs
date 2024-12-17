@@ -1,14 +1,16 @@
 <div class="sidebar">
     <div class="user-info">
-        <h3><%= user.uname || 'John Doe' %></h3>   <!-- Use dynamic data for user name -->
+        <a href="/account">
+            <h3><%= user.name || 'John Doe' %></h3>   <!-- Use dynamic data for user name -->
+        </a>
         <p><%= user.role || 'Library Manager' %></p>   <!-- Use dynamic data for user role -->
     </div>
 
     <div class="menu">
         <a href="/" id="dashboard-link">My Books</a>
-        <a href="/browse" id="browse-link">Browse Books</a>
-        <a href="/submit_book" id="addBook-link">Add Book</a>
-        <a href="/settings" id="settings-link">Settings</a>
+        <a href="/get/browse_books" id="browse-link">Browse Books</a>
+        <a href="/get/submit_book" id="addBook-link">Add Book</a>
+        <a href="/auth/logout" id="logout-link">Log Out</a>
     </div>
 
     <div class="footer">

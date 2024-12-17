@@ -1,0 +1,160 @@
+/* General layout for book details page */
+body.book-page {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f9;
+}
+
+#sidebar-container {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 250px; /* Adjust to sidebar width */
+}
+
+.header {
+    text-align: center;
+    margin-top: 40px; /* Add space above header */
+}
+
+.book-title {
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+/* Main content area for book details */
+.content {
+    margin-left: 270px; /* Create space for the sidebar */
+    padding: 20px;
+    background-color: #fff;
+    max-width: 800px;
+    margin: 0 auto;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Book details section */
+.book-details {
+    display: flex;
+    justify-content: space-between;
+}
+
+.info {
+    width: 60%;
+    padding-right: 20px;
+}
+
+.info p {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+}
+
+.description p {
+    font-size: 1rem;
+    color: #666;
+    line-height: 1.6;
+    margin: 15px 0;
+}
+
+strong {
+    font-weight: bold;
+    color: #555;
+}
+
+/* Button container */
+.action-container {
+    width: 35%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-left: 20px;
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    font-size: 1rem;
+    cursor: pointer;
+    border-radius: 5px;
+    border: none;
+    transition: background-color 0.3s ease;
+}
+
+/* Button - Add to Library */
+.add-to-library {
+    background-color: #28a745;
+    color: white;
+}
+
+.add-to-library:hover {
+    background-color: #218838;
+}
+
+/* Button - Delete from Library */
+.delete-btn {
+    background-color: #dc3545;
+    color: white;
+    display: inline-flex;
+    align-items: center;
+    padding: 10px 15px;
+}
+
+.delete-btn:hover {
+    background-color: #c82333;
+}
+
+.delete-btn .material-icons {
+    font-size: 20px;
+    margin-right: 8px;
+}
+
+/* 'You own this book' message */
+.owned-msg {
+    font-size: 1.2rem;
+    color: #28a745;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* Footer - back button */
+footer {
+    text-align: center;
+    margin-top: 30px;
+}
+
+footer .back-btn {
+    font-size: 1.1rem;
+    color: #007bff;
+    text-decoration: none;
+}
+
+footer .back-btn:hover {
+    text-decoration: underline;
+}
+
+/* Media Query - Responsiveness */
+@media (max-width: 768px) {
+    .book-details {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .info,
+    .description,
+    .action-container {
+        width: 100%;
+        margin-bottom: 15px;
+    }
+
+    h1.book-title {
+        font-size: 1.6rem;
+    }
+
+    .info p,
+    .description p {
+        font-size: 1em;
+    }
+}

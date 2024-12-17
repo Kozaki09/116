@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     <!-- <link rel="stylesheet" href="/css/general.css"> General styles -->
+    <link rel="stylesheet" href="/css/sidebar.css">
+    <link rel="stylesheet" href="/css/book.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <title><%= book.title %></title>
+</head>
+<body class="book-page">
+    <div id="sidebar-container"><%- include('../partials/sidebar') -%></div>
+
+    <div class="header">
+        <header>
+            <h1 class="book-title"><%= book.title %></h1>
+        </header>
+    </div>
+
+    <div class="content">
+        <div class="book-details">
+            <div class="info">
+                <p><strong>Author(s):</strong></p>
+                <div id = "authors">
+                    <p></p>
+                </div>
+                <p><strong>ISBN:</strong> <%= book.isbn %></p>
+                <p><strong>Publisher:</strong> <%= book.publisher && book.publisher.name ? book.publisher.name : 'Unknown' %></p>
+                <p><strong>Publicaiton:</strong> <%= book.publisher && book.publication ? book.publication : 'Unknown' %></p>
+            </div>
+            <div class="description">
+                <p><strong>Description:</strong> </p>
+            </div>
+            <div class="action-container">
+                <% if (!isOwned) { %> 
+                    <div class="add-btn">
+                        <button class="btn add-to-library" onclick="addToLibrary(<%= book.id %>)">Add to Library</button>
+                    </div>
+                <% } else { %>
+                    <button class="delete-btn" onclick= "deleteBook(<%= book.id %>)">
+                        <span class="material-icons">delete</span>
+                    </button>
+                <% } %>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function fillAuthors() {
+            const authors = <%- JSON.stringify(book.authors || []) %>;
+            const authorBody = document.querySelector('#authors p');
+
+            if (!authors.length) {
+                authorBody.textContent = 'No authors available';
+                return;
+            }
+
+            authors.forEach((author, index) => {
+                const authorLink = document.createElement('a');
+                authorLink.textContent = author.name;
+                authorLink.href = `/get/author?auth_id=${encodeURIComponent(author.id)}`;
+
+                if (index > 0) {
+                    authorBody.appendChild(document.createTextNode(', '));
+                }
+                authorBody.appendChild(authorLink);
+            });
+        }
+
+        function addToLibrary(book_id) {
+            console.log('Adding book with ID:', book_id);
+            fetch(`/add/my_library?book_id=${book_id}`, {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+            })
+            .catch(error => {
+                console.error('Error adding to library:', error);
+            });
+            location.reload();
+        }
+
+        async function deleteBook(book_id) {
+            try {
+                console.log(book_id);
+                const response = await fetch(`/remove/from_library?book_id=${book_id}`, {
+                    method: 'DELETE',
+                });
+
+                console.log("DEBUG");
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(`Failed to delete book. Status: ${response.status}`);
+                }
+
+                window.location.href = '/';
+            } catch (error) {
+                console.error('Error deleting book:', error);
+                alert('Failed to delete the book. Please try again.');
+            }
+        }
+
+        fillAuthors();
+    </script>
+</body>
+</html>

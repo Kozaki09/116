@@ -1,35 +1,39 @@
-const { sendHtmlFile, redirectBack } = require('../utils/helpers');
-const { buildSearchQuery, isPublic } = require('../utils/dbHelpers');
+const { getSession, redirectBack } = require('../utils/helpers');
+const { buildSearchQuery, buildBookQuery } = require('./query-builders');
 
 function isAuthenticated(req, res, next) {
     if (req.session.isLoggedIn) {
         return next();
     } else {
-        sendHtmlFile(res, 'public/login_create.html');
+        return res.render('public/login_create');
     }
 }
 
-function isOwned(req, res, next) {
-    const book_id = req.params.id;
-    const user_id = req.session.user_id;
-
-    filters = {
-        book_id: req.params.id,
-        user_id: req.session.user_id
-    }
-
-
-    if (isPublic) {
-        return next();
-    }
-
+async function isOwned(req, res, next) {
     try {
-        const result = buildSearchQuery("book_copies", [], filters);
+        const user =  getSession(req);
+        book_id = req.book_id;
 
-        if (result.rows.length > 0) {
+        if (!user || !user.id) {
+            return res.render('public/login_create', {message: 'You need to log in first'});
+        }
+
+        const availability = await buildBookQuery("books", ["availability"], {id: book_id});
+        const isPublic = availability.rows[0].availability === 'PUBLIC' ? true : false;
+
+        if (isPublic) {
+            return next();
+        }
+
+        filters = {
+            book_id: book_id,
+            user_id: user.id
+        }
+        const result = await buildSearchQuery("book_copies", [], filters);
+
+        if (result.rowCount > 0) {
             return next();
         } else {
-
             return redirectBack(req, res, message = 'You do not have access to this book.');
         }
     } catch (error) {
