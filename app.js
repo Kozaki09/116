@@ -21,7 +21,8 @@ app.use(session({
 }));
 
 app.use('/css', serveStatic('views/css'));
-app.use('/partial', serveStatic('views/partial'));
+app.use('/scripts', serveStatic('views/scripts'));
+app.use('/partial', serveStatic('views/partials'));
 
 routes(app); 
 
@@ -44,6 +45,11 @@ app.get('/', isAuthenticated, async (req, res) => {
         user: user 
     });
         // return sendHtmlFile(res, 'public/dashboard.html');
+});
+
+app.use((req, res) => {
+    // You can redirect or send a custom page
+    res.render('public/not-found') // Redirect to custom "Not Found" route
 });
 
 app.listen(port, () => {
