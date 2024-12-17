@@ -1,21 +1,73 @@
-/* book-form.css */
 
-/* Specific styles for the book information form */
-h1 {
-    font-size: 2em;
-    margin-bottom: 20px;
+
+.content label {
+    font-size: 1rem;
+    margin-bottom: 8px;
+    display: block;
+    color: #333;
 }
 
-/* Optional section subheader styling */
-.optional-subheader {
-    font-size: 1.1em;
-    font-weight: bold;
-    color: #555;
-    margin-top: 10px;
+.content input, .content select, .content button {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 16px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    font-size: 1rem;
 }
 
-/* Line separator for form fields */
-hr.line {
-    border-top: 2px solid #ccc;
+.content input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+.content input:focus, .content select:focus, .content button:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.4);
+}
+
+.content button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.content button:hover {
+    background-color: #0056b3;
+}
+
+/* Line between Optional and Required Sections */
+.content hr.line {
+    border: 1px solid #eee;
     margin: 20px 0;
+}
+
+/* Optional Subsection Styling */
+.content .optional-subheader {
+    font-size: 1.2rem;
+    color: #888;
+    margin-top: 30px;
+    margin-bottom: 10px;
+}
+
+/* Responsive Design for Content Only */
+@media screen and (max-width: 768px) {
+    .content {
+        margin-left: 0;
+        padding: 20px;
+    }
+
+    .content h1 {
+        font-size: 1.8rem;
+    }
+
+    .content label, .content input, .content select, .content button {
+        font-size: 0.9rem;
+    }
+
+    .content button {
+        padding: 12px;
+    }
 }

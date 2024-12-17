@@ -1,0 +1,96 @@
+/* General structure and positioning */
+body {
+    background-color: #f0f0f0;
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+/* Container holding the forms */
+.container {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    padding: 30px;
+}
+
+/* Form titles */
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 1.6rem;
+    color: #333;
+}
+
+/* Input and button styling */
+input {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    font-size: 1rem;
+}
+
+input:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.4);
+}
+
+/* Button styling */
+button {
+    width: 100%;
+    padding: 12px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+/* Link to switch forms */
+.toggle-link {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.toggle-link p {
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.toggle-link a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.toggle-link a:hover {
+    text-decoration: underline;
+}
+
+/* Responsive design adjustments */
+@media screen and (max-width: 600px) {
+    .container {
+        padding: 20px;
+    }
+
+    input, button {
+        padding: 10px;
+    }
+
+    h2 {
+        font-size: 1.4rem;
+    }
+}

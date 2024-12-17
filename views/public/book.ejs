@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
      <!-- <link rel="stylesheet" href="/css/general.css"> General styles -->
-    <link rel="stylesheet" href="/css/sidebar.css">
+    <link rel="stylesheet" href="/css/general.css">
     <link rel="stylesheet" href="/css/book.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <title><%= book.title %></title>
@@ -68,7 +68,7 @@
 
         function addToLibrary(book_id) {
             console.log('Adding book with ID:', book_id);
-            fetch(`/add/my_library?book_id=${book_id}`, {
+            fetch(`/add/to_my_library?book_id=${book_id}`, {
                 method: 'POST'
             })
             .then(response => response.json())

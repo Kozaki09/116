@@ -28,7 +28,6 @@ router.get('/book', isAuthenticated, async (req, res, next) =>{
     try {
         const user = getSession(req);
         const results = await buildBookQuery({book_id: book_id});
-        console.log(results.rowCount);
         if (results.rowCount === 0) {
             throw new Error("Book ID not found.");
         }

@@ -6,14 +6,6 @@ body.book-page {
     background-color: #f4f4f9;
 }
 
-#sidebar-container {
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 250px; /* Adjust to sidebar width */
-}
-
 .header {
     text-align: center;
     margin-top: 40px; /* Add space above header */

@@ -177,8 +177,6 @@ async function buildUpdateQuery(tablename, data = {}, filters = {}) {
 
     query += columns.join(', ');
     query += " WHERE " + conditions.join(' AND ');
-
-    console.log(query);
     return await db.query(query, values);
 }
 

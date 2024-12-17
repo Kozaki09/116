@@ -1,194 +1,89 @@
-/* Sidebar Styles */
-.sidebar {
-    height: 100%;
-    width: 250px;
-    position: fixed;
-    top: 0;
-    left: 0;
-    background-color: #2c3e50;
-    padding-top: 20px;
-    color: white;
-}
-
-.sidebar-header {
-    padding: 20px;
-    text-align: center;
-    background-color: #34495e;
-}
-
-.sidebar-links {
-    margin-top: 20px;
-}
-
-.sidebar-links ul {
-    list-style-type: none;
-    padding-left: 0;
-}
-
-.sidebar-links li {
-    padding: 10px;
-    text-align: center;
-}
-
-.sidebar-links li a {
-    color: white;
-    text-decoration: none;
-    display: block;
-}
-
-.sidebar-links li a:hover {
-    background-color: #1abc9c;
-}
-
-/* Content area styles */
-.content {
-    margin-left: 260px;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
 h1 {
-    font-size: 24px;
+    font-size: 2.2rem;
     margin-bottom: 20px;
 }
 
-/* Loading and Error styles */
-.loading, .error {
+/* Loading and Error Messages */
+#loading, #error {
     text-align: center;
-    font-size: 16px;
-}
-
-/* Table styles */
-table {
-    width: 100%;
-    table-layout: fixed;
-    border-collapse: collapse;
+    font-size: 1.2rem;
     margin-top: 20px;
 }
 
-td, th {
-    padding: 10px;
-    text-align: center; 
+#error {
+    color: red;
 }
 
-
-th {
-    background-color: #f8f8f8;
-    font-weight: bold;
+#loading {
+    color: #007BFF;
 }
 
-td input[type="text"], td input[type="number"] {
-    width: 100%; 
-    box-sizing: border-box;
-    padding: 5px;   
-}
-
-/* Button styling */
+/* Button Styling for delete and edit actions */
 button {
-    padding: 10px 15px;
-    font-size: 14px;
+    padding: 8px 16px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
     cursor: pointer;
-    border-radius: 4px;
-    border: 1px solid #ddd;
-    margin: 0 5px;
+    border-radius: 5px;
+    margin-right: 8px;
+    transition: background-color 0.3s ease;
 }
 
 button:hover {
     background-color: #0056b3;
 }
 
-.submit-btn {
-    background-color: #3498db;
-    color: white;
+button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
 }
 
-.delete-btn {
-    background-color: #e74c3c;
-    color: white;
+button.delete-btn {
+    background-color: #dc3545; /* Red color for delete buttons */
 }
 
-.delete-btn:hover {
-    background-color: #c0392b;
+button.delete-btn:hover {
+    background-color: #c82333; /* Darker red for hover state */
 }
 
-.edit-btn {
-    background-color: #f39c12;
-    color: white;
-}
-
-.edit-btn:hover {
-    background-color: #e67e22;
-}
-
-/* Optional styling for the action column */
-td button {
-    display: inline-block;
-    margin: 5px;
-}
-
-/* Improved input field styling */
-input:focus, select:focus, textarea:focus {
-    border-color: #007BFF;
-    outline: none;
-}
-
-/* Input Fields */
-input[type="text"], input[type="number"], textarea {
-    width: 100%;
-    padding: 10px;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-    box-sizing: border-box;
-}
-
-input[type="text"], input[type="number"], textarea {
-    margin-bottom: 10px;
-}
-
-/* Error/Success Messages */
-.error {
-    background-color: #f44336;
-    color: white;
-    padding: 10px;
+/* Loading state for the table */
+#loading {
+    text-align: center;
+    font-size: 1.2rem;
     margin-top: 20px;
+}
+
+/* Hidden class for elements */
+.hidden {
     display: none;
 }
 
-.success {
-    background-color: #4CAF50;
-    color: white;
-    padding: 10px;
-    margin-top: 20px;
-    display: none;
-}
+/* Responsive Styling */
+@media screen and (max-width: 768px) {
+    #sidebar-container {
+        display: none;
+    }
 
-input, select, button {
-    width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-    text-align: center; /* Align the text inside input elements */
-}
-
-
-/* Adjusting layout for smaller screens */
-@media (max-width: 768px) {
     .content {
-        width: 90%;
+        margin-left: 0;
     }
 
     h1 {
-        font-size: 1.5em;
+        font-size: 1.5rem;
     }
 
-    input, select, button {
-        font-size: 14px;
+    table, th, td {
+        font-size: 0.9rem;
     }
-}
 
-.modal {
-    display: none,
+    button {
+        width: 100%;
+        padding: 12px;
+    }
+
+    #edit-book-modal {
+        width: 90%;
+        margin: 0;
+    }
 }

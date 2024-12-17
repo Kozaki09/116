@@ -1,3 +1,5 @@
+<link rel="Stylesheets" href="/css/modal.css">  
+
 <!-- Modal Overlay -->
 <div id="modal-overlay" onclick="closeModal()"></div>
 
@@ -8,15 +10,15 @@
     <form id="edit-form" action="/edit/book" method="POST">
         <input type="hidden" name="book_id" id="book_id">
         
-        <label for="title">Title:</label>
+        <label for="title_input">Title:</label>
         <input type="text" id="title_input" name="title_input">
         <input type="hidden" id="title_hidden" name="title">
 
-        <label for="isbn">ISBN:</label>
+        <label for="isbn_input">ISBN:</label>
         <input type="text" id="isbn_input" name="isbn_input">
         <input type="hidden" id="isbn_hidden" name="isbn">
 
-        <label for="availability">Availability:</label>
+        <label for="availability_input">Availability:</label>
         <select id="availability_input" name="availability_input">
           <option value="public">Public</option>
           <option value="private">Private</option>
@@ -24,15 +26,15 @@
         </select> 
         <input type="hidden" id="availability_hidden", name="availability">
 
-        <label for="authors">Authors:</label>
+        <label for="authors_input">Authors:</label>
         <input type="text" id="authors_input" name="authors_input">
         <input type="hidden" id="authors_hidden" name="authors">
 
-        <label for="publisher">Publisher:</label>
+        <label for="publisher_input">Publisher:</label>
         <input type="text" id="publisher_input" name="publisher_input">
         <input type="hidden" id="publisher_hidden" name="publisher">
 
-        <label for="publication">Publication Year:</label>
+        <label for="publication_input">Publication Year:</label>
         <input type="text" id="publication_input" name="publication_input">
         <input type="hidden" id="publication_hidden" name="publication">
 
@@ -41,3 +43,12 @@
     </form>
 </div>
 
+<script>
+  function closeModal() {
+    const modal = document.getElementById('edit-book-modal');
+    const overlay = document.getElementById('modal-overlay');
+    
+    modal.style.display = 'none';
+    overlay.style.display = 'none';
+}
+</script>

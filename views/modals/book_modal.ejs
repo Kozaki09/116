@@ -1,0 +1,107 @@
+<link rel="Stylesheets" href="/css/modal.css">
+
+<!-- Book Information Modal -->
+<div id="book-info-modal" class="modal">
+    <div class="modal-content">
+        <!-- Close Button -->
+        <span class="close-btn" onclick="closeModal()">&times;</span>
+
+        <!-- Book Information -->
+        <div class="header">
+            <h2 class="book-title"><%= book.title %></h2>
+        </div>
+
+        <div class="book-details">
+            <div class="info">
+                <p><strong>Author(s):</strong></p>
+                <div id="authors">
+                    <p>No authors available</p> <!-- Placeholder until filled by JS -->
+                </div>
+                <p><strong>ISBN:</strong> <%= book.isbn %></p>
+                <p><strong>Publisher:</strong> <%= book.publisher && book.publisher.name ? book.publisher.name : 'Unknown' %></p>
+                <p><strong>Publication Date:</strong> <%= book.publisher && book.publication ? book.publication : 'Unknown' %></p>
+            </div>
+            <div class="description">
+                <p><strong>Description:</strong> <%= book.description %></p>
+            </div>
+            <div class="action-container">
+                <% if (!isOwned) { %>
+                    <div class="add-btn">
+                        <button class="btn add-to-library" onclick="addToLibrary(<%= book.id %>)">Add to Library</button>
+                    </div>
+                <% } else { %>
+                    <button class="delete-btn" onclick="deleteBook(<%= book.id %>)">
+                        <span class="material-icons">delete</span>
+                    </button>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JS to interact with the modal -->
+<script>
+    function openModal() {
+        document.getElementById('book-info-modal').style.display = "block";
+    }
+
+    function closeModal() {
+        document.getElementById('book-info-modal').style.display = "none";
+    }
+
+    async function fillAuthors() {
+        const authors = <%- JSON.stringify(book.authors || []) %>;
+        const authorBody = document.querySelector('#authors p');
+
+        if (!authors.length) {
+            authorBody.textContent = 'No authors available';
+            return;
+        }
+
+        authors.forEach((author, index) => {
+            const authorLink = document.createElement('a');
+            authorLink.textContent = author.name;
+            authorLink.href = `/get/author?auth_id=${encodeURIComponent(author.id)}`;
+
+            if (index > 0) {
+                authorBody.appendChild(document.createTextNode(', '));
+            }
+            authorBody.appendChild(authorLink);
+        });
+    }
+
+    function addToLibrary(book_id) {
+        fetch(`/add/to_my_library?book_id=${book_id}`, {
+            method: 'POST'
+        })
+        .then(response => response.json())
+        .then(data => alert(data.message))
+        .catch(error => {
+            console.error('Error adding to library:', error);
+            alert('There was an error adding the book to your library.');
+        });
+
+        closeModal(); // Close the modal after action
+    }
+
+    async function deleteBook(book_id) {
+        try {
+            const response = await fetch(`/remove/from_library?book_id=${book_id}`, { method: 'DELETE' });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(`Failed to delete book. Status: ${response.status}`);
+            }
+
+            window.location.href = '/'; // Redirect after deleting
+        } catch (error) {
+            console.error('Error deleting book:', error);
+            alert('Failed to delete the book. Please try again.');
+        }
+
+        closeModal(); // Close the modal after action
+    }
+
+    fillAuthors();
+</script>
