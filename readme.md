@@ -32,3 +32,9 @@ A web based application that allows user create a library of ebooks using public
     - Sets relationship between `books` and `users` signifying ownership
 - `book_authors` and `book_publishers` Tables
     - Sets many-to-many relationship between `books` table and `authors` or `publishers`
+
+## Authors
+
+- [Godwin Florendo](https://github.com/Kozaki09)
+- [Melvie Jeanna Abad](https://github.com/vie-yanna)
+
