@@ -32,7 +32,7 @@ router.post('/book_submission', isAuthenticated, async (req, res) => {
         isbn, isbn,
         pub_id: null,
         publication: publication || null,
-        availability: (availability && availability.toUpperCase()) || 'PUBLIC'
+        availability: availability || 'public'
     };
 
     try {
