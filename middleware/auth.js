@@ -19,7 +19,7 @@ async function isOwned(req, res, next) {
         }
 
         const availability = await buildBookQuery("books", ["availability"], {id: book_id});
-        const isPublic = availability.rows[0].availability === 'PUBLIC' ? true : false;
+        const isPublic = availability.rows[0].availability !== 'private' ? true : false;
 
         if (isPublic) {
             return next();

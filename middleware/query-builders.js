@@ -22,7 +22,7 @@ async function buildBookQuery(filters = {}) {
     } 
     
     if (filters.public) {
-        whereClause += ` AND books.availability = 'PUBLIC'`;
+        whereClause += ` AND books.availability = 'public'`;
     }
 
     if (filters.title) {

@@ -49,6 +49,7 @@ function formatBookResults(results) {
                 id: row.id,
                 title: row.title,
                 isbn: row.isbn,
+                availability: row.availability,
                 publication: row.publication,
                 publisher: row.pub_id && row.pub_name
                 ? {id: row.pub_id, name: row.pub_name}
