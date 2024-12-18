@@ -22,7 +22,7 @@ async function buildBookQuery(filters = {}) {
     } 
     
     if (filters.public) {
-        whereClause += ` OR books.availability = 'PUBLIC'`;
+        whereClause += ` AND books.availability = 'public'`;
     }
 
     if (filters.title) {
@@ -42,7 +42,7 @@ async function buildBookQuery(filters = {}) {
 
     if (filters.sort) {
         const sortOrder = filters.sort === 'desc' ? 'DESC' : 'ASC';
-        query += ` ORDER BY books.title ${sortOrder}`;
+        whereClause += ` ORDER BY books.title ${sortOrder}`;
     }
 
     query += whereClause;
@@ -50,7 +50,7 @@ async function buildBookQuery(filters = {}) {
         if (filters.email) {
             return await db.query('SELECT * FROM users where email = $1', [filters.email]);
         }    
-        if (parameters.length > 0) {
+        if (Object.keys(filters).length > 0) {
             return await db.query(query, parameters);
         } else {
             return await db.query(query);
@@ -177,8 +177,6 @@ async function buildUpdateQuery(tablename, data = {}, filters = {}) {
 
     query += columns.join(', ');
     query += " WHERE " + conditions.join(' AND ');
-
-    console.log(query);
     return await db.query(query, values);
 }
 

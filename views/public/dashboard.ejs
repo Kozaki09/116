@@ -3,292 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
-    <link rel="stylesheet" href="/css/general.css"> <!-- General styles -->
-    <link rel="stylesheet" href="/css/dashboard.css"> <!-- Specific styles for dashboard page -->
-    <link rel="stylesheet" href="/css/sidebar.css"> <!-- Specific styles for login/create page -->
+    <title>My Book Dashboard</title>
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="/css/general.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <link rel="stylesheet" href="/css/modal.css">
+    <!-- Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
+
 <body>
+    <!-- Sidebar -->
     <div id="sidebar-container"><%- include('../partials/sidebar') %></div>
 
+    <!-- Main Content -->
     <div class="content">
-        <h1>My Books</h1>
-        <div id="loading" class="loading">Loading books...</div>
+        <h1>My Book Library</h1>
 
-        <table id="booksTable" style="display: none;">
+        <!-- Loading Message -->
+        <div id="loading" class="loading-message">Loading books...</div>
+
+        <!-- Table -->
+        <table id="booksTable" class="styled-table hidden rounded">
             <thead>
                 <tr>
                     <th>Title</th>
                     <th>ISBN</th>
-                    <th>Author</th>
+                    <th>Author(s)</th>
                     <th>Publisher</th>
-                    <th>Publication</th>
-                    <th></th>
+                    <th>Publication Year</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
-            <tbody>
-                <!-- Data will be inserted here -->
-            </tbody>
+            <tbody></tbody>
         </table>
 
-        <div id="error" class="error" style="display: none;">Failed to load books. Please try again later.</div>
+        <!-- Error Message -->
+        <div id="error" class="error-message hidden">Failed to load books. Please try again later.</div>
     </div>
 
-    <script>
-        function fillTable() {
-            try {
-                const books = <%- JSON.stringify(books) %>;
-                console.log("get books");
+        <!-- Modal -->
+        <%- include('../modals/edit_book') %>
 
-                if (typeof books !== "object") {
-                    throw new Error('Expected books to be an object');
-                }
-
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('booksTable').style.display = 'table';
-
-                const tableBody = document.querySelector('#booksTable tbody');
-                tableBody.innerHTML = '';
-
-                const viewRows = createViewRows(books);
-                const formRows = createFormRows(books);
-
-                length = viewRows.length;
-                if (length === 0) {
-                    document.getElementById('loading').innerHTML = 'No books found.';
-                    return;
-                }
-
-                for (i = 0; i < length; i++) {
-                    tableBody.appendChild(viewRows[i]);
-                    tableBody.appendChild(formRows[i]);
-
-                    formRows[i].style.display = 'none';
-                }
-
-                
-            } catch (error) {
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('error').style.display = 'block';
-                console.error('Error fetching books:', error);
-            }
-        }
-
-        function createViewRows(books) {
-            const rows = [];
-
-            Object.keys(books).forEach(id => {
-                    const book = books[id];
-            
-                    const row = document.createElement('tr');  
-                    row.id = 'views_' + id;
-
-                        // title columns
-                    const titleCell = document.createElement('td');
-                    const titleLink = document.createElement('a');
-                    titleLink.textContent = book.title;
-                    titleLink.href = `/get/book?book_id=${id}`;
-                    titleCell.appendChild(titleLink);
-
-                        // isbn columns
-                    const isbnCell = document.createElement('td');
-                    isbnCell.textContent = book.isbn;
-
-                        // authors columns
-                    const authorCell = document.createElement('td');
-                    book.authors.forEach((author, index) => {
-                        const authorLink = document.createElement('a');
-                        authorLink.textContent = author.name;
-                        authorLink.href= `author?auth_id=${encodeURIComponent(author.id)}`;
-
-                        if (index > 0) {
-                            authorCell.appendChild(document.createTextNode(', '));
-                        }
-
-                        authorCell.appendChild(authorLink);
-                    });
-
-                        // publisher columns
-                    const publisherCell = document.createElement('td');
-                    publisherCell.textContent = book.publisher.name === 'Unknown' ? '' : book.publisher.name;
-
-                        // publication columns
-                    const publicationCell = document.createElement('td');
-                    publicationCell.textContent = book.publication === 'Unknown' ? '' :  book.publication;
-
-                        // button columns
-                    const actionCell = document.createElement('td');
-
-                    const deleteButton = document.createElement('button');
-                    deleteButton.classList.add('delete-btn');
-                    deleteButton.onclick = () => deleteBook(id);
-
-                    const trashIcon = document.createElement('span');
-                    trashIcon.classList.add('material-icons');
-                    trashIcon.textContent = 'delete';
-                    deleteButton.prepend(trashIcon);
-
-                    const editButton = document.createElement('button');
-                    editButton.textContent = 'Edit';
-                    editButton.type = 'button';
-                    editButton.addEventListener('click', function() {
-                        toggleForm(id);
-                    })
-
-                    actionCell.appendChild(deleteButton);
-                    actionCell.appendChild(editButton);
-
-                    row.appendChild(titleCell);
-                    row.appendChild(isbnCell);
-                    row.appendChild(authorCell);
-                    row.appendChild(publisherCell);
-                    row.appendChild(publicationCell);
-                    row.appendChild(actionCell);
-
-                    rows.push(row);
-                });
-
-            return rows;
-        }
-
-        function createFormRows(books) {
-            const rows = [];
-
-            Object.keys(books).forEach(id => {
-                const book = books[id];
-
-                const form = document.createElement('form');
-                const row = document.createElement('tr');
-                row.id = 'form_' + id;
-
-                // title columns
-                const titleCell = document.createElement('td');
-                const titleForm = document.createElement('input');
-                titleForm.value = book.title;
-                titleForm.type = 'text';
-                titleForm.name = 'title';
-                titleForm.requierd = true;
-                titleForm.placeholder = 'Book Title';
-                titleCell.appendChild(titleForm);
-
-                // isbn columns
-                const isbnCell = document.createElement('td');
-                const isbnForm = document.createElement('input');
-                isbnForm.value = book.isbn;
-                isbnForm.type = 'text';
-                isbnForm.name = 'isbn';
-                isbnForm.required = true;
-                isbnForm.placeholder = 'ISBN';
-                isbnCell.appendChild(isbnForm);
-
-                // author columns
-                const authorCell = document.createElement('td');
-                const authorForm = document.createElement('input');
-                authorForm.value = book.authors.map(author => author.name).join(', ');
-                authorForm.type = 'text';
-                authorForm.name = 'authors';
-                authorForm.placeholder = 'Author(s)';
-                authorCell.appendChild(authorForm);
-
-                // publisher columns
-                const publisherCell = document.createElement('td');
-                const publisherForm = document.createElement('input');
-                publisherForm.value = book.publisher.name === 'Unknown' ? '' : book.publisher.name;
-                publisherForm.type = 'text';
-                publisherForm.name = 'publisher';
-                publisherForm.placeholder = 'Publisher';
-                publisherCell.appendChild(publisherForm);
-
-                // publication columns
-                const publicationCell = document.createElement('td');
-                const publicationForm = document.createElement('input');
-                publicationForm.value = book.publication === 'Unknown' ? '' : book.publication;
-                publicationForm.type = 'number';
-                publicationForm.name = 'publication';
-                publicationForm.placeholder = 'Publication Year';
-                publicationCell.appendChild(publicationForm);
-
-                // button columns
-                const actionCell = document.createElement('td');
-
-                const submitButton = document.createElement('button');
-                submitButton.textContent = 'Submit';
-                submitButton.type = 'button';
-                submitButton.addEventListener('click', function(event) {
-                    event.preventDefault(); 
-                    form.submit();
-                })
-
-                const cancelButton = document.createElement('button');
-                cancelButton.textContent = 'Cancel';
-                cancelButton.type = 'button';
-                cancelButton.addEventListener('click', function()  {
-                    toggleForm(id);
-                })
-
-                actionCell.appendChild(submitButton);
-                actionCell.appendChild(cancelButton);
-
-                row.appendChild(titleCell);
-                row.appendChild(isbnCell);
-                row.appendChild(authorCell);
-                row.appendChild(publisherCell);
-                row.appendChild(publicationCell);
-                row.appendChild(actionCell);
-                form.appendChild(row);
-
-                rows.push(row);
-            });
-            
-            return rows;
-        }
-
-        function toggleForm(id) {
-            const view = document.getElementById('views_' + id);
-            const form = document.getElementById('form_' + id);
-
-            if (form.style.display === 'none') {
-                // Show the form row and hide the view row
-                form.style.display = 'table-row';
-                view.style.display = 'none';
-            } else {
-                // Hide the form row and show the view row
-                form.style.display = 'none';
-                view.style.display = 'table-row';
-            }
-        }
-
-        async function submitRow(id) {
-
-        }
-
-        // Function to delete a book
-        async function deleteBook(book_id) {
-            try {
-                const response = await fetch(`/remove/from_library?book_id=${book_id}`, {
-                    method: 'DELETE',
-                }); 
-
-                console.log(response);
-                const result = await response.json();
-                console.log(result);
-
-                if (!response.ok) {
-                    throw new Error(`Failed to delete book. Status: ${response.status}`);
-                }
-
-                console.log("attempting to fill table");
-                // Refresh the book list after successful deletion
-                window.location.href = '/';
-            } catch (error) {
-                console.error('Error deleting book:', error);
-                alert('Failed to delete the book. Please try again.');
-            }
-        }
-
-        fillTable();
-    </script>
+        <script src="/scripts/dashboard.js"></script>
+        
+        <script>
+            const books = <%- JSON.stringify(books) %>;
+            fillTable(books);
+        </script>
 
 </body>
 </html>

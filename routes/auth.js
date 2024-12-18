@@ -75,6 +75,17 @@ router.post('/create', async (req, res) => {
         console.log('Error trying to create new account: ', error);
         return res.sendStatus(500);
     }
+});
+
+router.get('/logout', (req, res) => {
+    req.session.destroy((error) => {
+        if (error) {
+            console.log('Error destroying session: ', error);
+            return res.sendStatus(500);
+        }
+
+        res.redirect('/');
+    })
 })
 
 module.exports = router;

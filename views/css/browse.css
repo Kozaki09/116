@@ -1,0 +1,27 @@
+/* General content styling for the Browse page */
+.content {
+    margin-left: 250px; /* Adjust for sidebar width */
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+/* Heading for Browse Page */
+.content h1 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+}
+
+/* Loading indicator */
+#loading {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #888;
+}
+
+/* Error message style */
+#error {
+    text-align: center;
+    color: red;
+    font-size: 1rem;
+    margin-top: 20px;
+}

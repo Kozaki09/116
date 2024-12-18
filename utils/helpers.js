@@ -41,13 +41,15 @@ function resolvePath(segments) {
 
 function formatBookResults(results) {
     const books = {};
+    const bookOrder = [];
 
     results.rows.forEach((row) => {
-        if (!books[row.id]) {
+        if (!bookOrder.includes(row.id)) {
             books[row.id] = {
                 id: row.id,
                 title: row.title,
                 isbn: row.isbn,
+                availability: row.availability,
                 publication: row.publication,
                 publisher: row.pub_id && row.pub_name
                 ? {id: row.pub_id, name: row.pub_name}
@@ -56,12 +58,15 @@ function formatBookResults(results) {
             }
         }
 
+        bookOrder.push(row.id);
+
         if (row.auth_id && row.auth_name) {
             books[row.id].authors.push({id: row.auth_id, name: row.auth_name});
         }
     });
 
-    return books;
+
+    return bookOrder.map(id => books[id]);
 }
 
 function redirectBack(req, res, message) {

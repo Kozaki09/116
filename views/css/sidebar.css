@@ -1,144 +1,114 @@
-/* Sidebar container that wraps both sidebar and content */
-#sidebar-container {
-    display: flex; /* Flexbox to position sidebar and content side by side */
-    height: 100vh; /* Make sure it takes up the full height of the viewport */
-}
-
-/* Sidebar styles */
+/* General Sidebar Container Styling */
 .sidebar {
-    width: 250px; /* Sidebar width */
-    background-color: #343a40; /* Sidebar background color (dark grey) */
-    color: white; /* Sidebar text color */
-    padding: 20px;
-    box-sizing: border-box;
-    position: fixed; /* Fix the sidebar on the left side */
+    width: 250px;
+    background-color: #343a40;
+    color: #fff;
+    position: fixed;
     top: 0;
     left: 0;
-    height: 100%; /* Full height */
+    height: 100%;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 2px 0px 6px rgba(0, 0, 0, 0.1);
 }
 
-/* User information in sidebar */
-.user-info {
+/* User Info Section */
+.sidebar .user-info {
     text-align: center;
     margin-bottom: 20px;
 }
 
-.user-info img {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    margin-bottom: 10px;
+.sidebar .user-info h3 {
+    font-size: 1.5rem;
+    margin-bottom: 5px;
+    color: #fff;
+    text-decoration: none;
+    transition: color 0.3s ease;
 }
 
-.user-info h3 {
-    margin: 0;
-    color: white; /* Ensuring user name is white */
+.sidebar .user-info h3:hover {
+    color: #007bff;
 }
 
-.user-info p {
-    font-size: 0.9em;
-    color: gray;
+.sidebar .user-info p {
+    font-size: 1rem;
+    color: #aaa;
 }
 
-/* Sidebar header */
-.sidebar-header {
-    font-weight: bold;
-    margin-top: 20px;
-    padding: 10px;
-    background-color: #505f68; /* Slightly darker grey for better contrast */
+/* Menu Items */
+.sidebar .menu {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: auto;
+}
+
+.sidebar .menu a {
+    text-decoration: none;
+    font-size: 1.2rem;
+    color: #ddd;
+    padding: 12px;
     border-radius: 5px;
+    transition: background-color 0.3s, color 0.3s;
 }
 
-/* Sidebar links */
-.menu {
-    margin-top: 20px;
-}
-
-.menu a {
-    display: block;
-    padding: 10px 20px;
-    margin-bottom: 10px;
-    text-decoration: none;
-    color: white; /* Links text color */
-    border-radius: 4px;
-    transition: background-color 0.3s ease;
-}
-
-.menu a:hover {
+.sidebar .menu a:hover {
     background-color: #007bff;
     color: white;
 }
 
-.menu .active {
-    background-color: #007bff;
-    color: white;
-}
-
-/* Sidebar footer */
-.footer {
-    margin-top: 20px;
-    text-align: center;
-    color: #777;
-}
-
-/* Main content area */
-.content {
-    margin-left: 270px; /* Add margin to content area so it's not hidden behind the sidebar */
-    padding: 20px;
-    width: calc(100% - 270px); /* Adjust content width to take up the remaining space */
-    box-sizing: border-box;
-}
-
-/* Table styles */
-#booksTable {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-#booksTable th, #booksTable td {
-    padding: 10px;
-    border: 1px solid #ccc;
-    text-align: left;
-}
-
-#booksTable th {
-    background-color: #f4f4f4;
-}
-
-#booksTable td button {
-    padding: 5px 10px;
-    background-color: red;
-    color: white;
-    border: none;
-    cursor: pointer;
-}
-
-#booksTable td button:hover {
-    background-color: darkred;
-}
-
-/* Loading and error states */
-.loading, .error {
-    text-align: center;
-    font-size: 1.2em;
-    color: #888;
-}
-
-.submit-btn {
-    display: block;
-    width: 200px;
-    margin: 20px auto;
-    padding: 10px;
+.sidebar .menu #dashboard-link:hover {
     background-color: #28a745;
-    color: white;
-    border: none;
-    cursor: pointer;
 }
 
-.submit-btn:hover {
-    background-color: #218838;
+.sidebar .menu #browse-link:hover {
+    background-color: #ffc107;
 }
 
-a {
+.sidebar .menu #addBook-link:hover {
+    background-color: #007bff;
+}
+
+.sidebar .menu #logout-link:hover {
+    background-color: #dc3545;
+}
+
+/* Footer Section */
+.sidebar .footer {
+    position: absolute;
+    bottom: 20px;
+    text-align: center;
+    font-size: 0.9rem;
+    color: #aaa;
+}
+
+.sidebar .footer a {
     text-decoration: none;
+    color: #ddd;
+    transition: color 0.3s;
+}
+
+.sidebar .footer a:hover {
+    color: #007bff;
+}
+
+/* Responsive Sidebar */
+@media screen and (max-width: 768px) {
+    .sidebar {
+        width: 200px;
+        padding: 10px;
+    }
+
+    .sidebar .user-info h3 {
+        font-size: 1.3rem;
+    }
+
+    .sidebar .user-info p {
+        font-size: 0.9rem;
+    }
+
+    .sidebar .menu a {
+        font-size: 1rem;
+    }
 }

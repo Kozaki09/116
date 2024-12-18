@@ -6,14 +6,13 @@
     <title>Book Information Form</title>
     <link rel="stylesheet" href="/css/general.css">
     <link rel="stylesheet" href="/css/submit.css"> 
-    <link rel="stylesheet" href="/css/sidebar.css">
 </head>
 <body>
     <div id="sidebar-container"><%- include('../partials/sidebar') %></div>
 
     <div class="content">
         <h1>Submit Book Information</h1>
-        <form action="/add/book_submission" method="POST">
+        <form class="rounded" action="/add/book_submission" method="POST">
             <label for="title">Book Title:</label>
             <input type="text" id="title" name="title" placeholder="Enter the book title" required> 
 

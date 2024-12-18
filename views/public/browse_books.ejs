@@ -6,7 +6,6 @@
     <title>Browse</title>
     <link rel="stylesheet" href="/css/general.css"> <!-- General styles -->
     <link rel="stylesheet" href="/css/browse.css"> <!-- Specific styles for dashboard page -->
-    <link rel="stylesheet" href="/css/sidebar.css"> <!-- Specific styles for login/create page -->
 </head>
 <body>
     <div id="sidebar-container"><%- include('../partials/sidebar') %></div>
@@ -15,7 +14,7 @@
         <h1>Browse</h1>
         <div id="loading" class="loading">Loading books...</div>
 
-    <table id="booksTable" style="display: none;">
+    <table class="rounded" id="booksTable" style="display: none;">
         <thead>
             <tr>
                 <th>Title</th>
@@ -26,6 +25,7 @@
             <!-- Data will be inserted here -->
         </tbody>
     </table>
+    </div>
 
     <script>
         async function fillTable() {
@@ -50,7 +50,7 @@
                     const titleCell = document.createElement('td');
                     const titleLink = document.createElement('a');
                     titleLink.textContent = book.title;
-                    titleLink.href = `/get/book?book_id=${id}`;
+                    titleLink.href = `/get/book?book_id=${book.id}`;
                     titleCell.appendChild(titleLink);
 
                     const authorCell = document.createElement('td');

@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.get('/browse_books', isAuthenticated, async (req, res) => {
     const user = await getSession(req);
-    filters = {user_id: user.direction, public: true};
+    filters = {user_id: user.direction, public: true, sort: 'asc'};
 
     const results = await buildBookQuery(filters);
     const books = formatBookResults(results);
@@ -28,7 +28,6 @@ router.get('/book', isAuthenticated, async (req, res, next) =>{
     try {
         const user = getSession(req);
         const results = await buildBookQuery({book_id: book_id});
-        console.log(results.rowCount);
         if (results.rowCount === 0) {
             throw new Error("Book ID not found.");
         }
@@ -37,7 +36,7 @@ router.get('/book', isAuthenticated, async (req, res, next) =>{
         const books = formatBookResults(results);
 
         return res.render('public/book', {
-            book: books[book_id],
+            book: books[0],
             isOwned,
             user
         })
