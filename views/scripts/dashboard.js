@@ -45,7 +45,7 @@ function createViewRows(books) {
             const titleCell = document.createElement('td');
             const titleLink = document.createElement('a');
             titleLink.textContent = book.title;
-            titleLink.href = `/get/book?book_id=${id}`;
+            titleLink.href = `/get/book?book_id=${book.id}`;
             titleCell.appendChild(titleLink);
 
                 // isbn columns
@@ -79,7 +79,7 @@ function createViewRows(books) {
 
             const deleteButton = document.createElement('button');
             deleteButton.classList.add('delete-btn');
-            deleteButton.onclick = () => deleteBook(id);
+            deleteButton.onclick = () => deleteBook(book.id);
 
             const trashIcon = document.createElement('span');
             trashIcon.classList.add('material-icons');

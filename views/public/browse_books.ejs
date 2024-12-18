@@ -50,7 +50,7 @@
                     const titleCell = document.createElement('td');
                     const titleLink = document.createElement('a');
                     titleLink.textContent = book.title;
-                    titleLink.href = `/get/book?book_id=${id}`;
+                    titleLink.href = `/get/book?book_id=${book.id}`;
                     titleCell.appendChild(titleLink);
 
                     const authorCell = document.createElement('td');

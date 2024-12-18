@@ -36,7 +36,7 @@ router.get('/book', isAuthenticated, async (req, res, next) =>{
         const books = formatBookResults(results);
 
         return res.render('public/book', {
-            book: books[book_id],
+            book: books[0],
             isOwned,
             user
         })
